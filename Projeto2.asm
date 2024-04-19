@@ -77,6 +77,162 @@ Display_MenuComprar:                                        ;Display do menu de 
     String "5-ESTACAO 5:7.00"
 	String "6 - CANCELAR    "
 
+PLACE 2200H
+
+Display_Talao:                                              ;Display do Talao
+
+    String "   PEPE GERADO  "
+    String "       001      "
+    String "                "
+	String "            .00 "
+	String "Inserido..  .00 "
+	String "Troco...... .00 "
+	String "                "
+	String " 1 - Continuar  "
+    
+PLACE 2300H
+
+Display_CodigoPEPE:                                         ;Display de introdução do código PEPE
+    
+    String "  INTRODUZA N.  "
+    String "      PEPE      "
+    String " XXXXX          "
+    String "                "
+    String " 1 - Continuar  "
+    String " 5 - Cancelar   "
+
+PLACE 2400H
+                                                            ;Display de nº pepe errado
+Display_NPEPEErrado:											
+	String " ---- ERRO ---- "
+	String "                "
+	String "     Nº PEPE    "
+	String "    incorreto   "
+	String "                "
+	String " 7 - Voltar     "
+
+PLACE 2500H
+
+Display_MenuUsarPEPE:                                      ;Display do menu de compra usando PEPE
+
+    String "   SALDO PEPE   "
+    String "                "
+    String "     00.00      "
+    String "                "
+    String "1 - Comprar     "
+    String "2 - Recarregar  "
+
+PLACE 2600H
+                                                           ;Display de pagamento
+Display_Pagamento:
+    String "   Pagamento    "
+	String "   Inserido:    "
+	String "     0.00       "
+	String "     Euros      "
+	String "                "
+	String "6 - Cancelar    "
+	String "9 - Confirmar    "
+
+Place 2700H  											  
+                                                           ;Display para a falta de moedas de troco
+Display_FaltaMoedasTroco:
+	String "---- Alerta ----"
+    String "                "
+	String "     Moedas     "
+	String "    Em stock    "
+	String "  insuficientes "
+	String "   para troco   "
+	String "                "
+	String " 1 - Continuar   "
+
+Place 2800H
+                                                          ; Display para a falta inserir moedas para pagamento
+Display_FaltaInserirMoedas:
+    String "---- Alerta ----"
+    String "                "
+	String " Valor inserido "
+    String "       é        "
+	String "  insuficiente  "
+	String "                "
+	String " 7 - Voltar     "
+
+Place 2900H
+                                                          ; Display para a falta de saldo no cartão
+Display_Agradecimento:									
+	String "!!!!!!!!!!!!!!!!"
+	String "    Obrigado    "
+	String "    Pela sua    "
+	String "     Compra     "
+	String "                "
+	String "  Volte sempre  "
+    String "                "	
+	String " 1 - Continuar  "
+
+Place 2A00H
+                                                          ; Display para gerir o stock
+Display_Stock:                                                          
+	String "     STOCK      "
+	String "                "
+	String " 1 - Consultar  "
+	String " 2 - Inserir    "
+	String " 7 - Voltar     "
+
+Place 2B00H
+                                                          ; Display para consultar o stock                                                     
+Display_ConsultarStock:									
+	String "    CONSULTA    "
+	String "     STOCK      "
+	String "                "
+	String " 10 Cent...  0  "
+	String " 20 Cent...  0  "
+	String " 50 Cent...  0  "
+    String " 1  euro...  0  "
+    String " 2  euro...  0  "
+
+Place 2C00H
+
+Display_InserirMoedas1:									    ;Display da inserção de Moedas stock
+	String "    INSERCAO      "
+	String "   DE  MOEDAS     "
+	String "1 - 10 Cent...  0 "
+	String "2 - 20 Cent...  0 "
+	String "3 - 50 Cent...  0 "
+	String " 5 - Seguinte     "
+	String " 7 - Voltar       "
+
+Place 2D00H
+
+Display_InserirMoedas2:										;Display da inserção de Moedas stock
+	String "    INSERCAO      "
+	String "  DE  MOEDAS      "
+	String "1 - 1 Euro....  0 "
+	String "2 - 2 Euros...  0 "
+	String " 7 - Voltar       "
+	String "  9 - Sair        "	
+
+Place 2E00H
+
+Display_QuantasInserir:										 ;Display da quantidade de moedas a inserir no stock
+	String "    Quantas     "
+	String " moedas  deseja "
+	String "    inserir ?   "
+	String "       0        "
+	String "                "
+	String "1 - Confirmar   "
+	String "7 - Cancelar    "
+
+Place 2E50H
+
+Display_InseridoSucesso:									 ;Display da mensagem de inserção de dinheiro stock
+	String "!!!!!!!!!!!!!!!!"
+	String "   Dinheiro     "
+	String "   inserido     "
+	String "     com        "
+	String "    sucesso     "
+	String "                "
+	String "1 -  Seguinte   "
+   
+   
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;                                                      Código de Inicialização
 ;-----------------------------------------------------------------------------------------------------------------------------------------
