@@ -1,15 +1,15 @@
 
 ; Periféricos de Entrada-----------------------------------------------------------------------------------------------------------------
 
-OK EQU 1C0H                                                 ; Botão OK
+ON_OFF EQU 1A0H                                             ; Botão ON/OFF
 
 Opcao EQU 1B0H                                              ; Botão Opção
 
-ON_OFF EQU 1A0H                                             ; Botão ON/OFF
+OK EQU 1C0H                                                 ; Botão OK
 
 ; Periféricos de Saída-------------------------------------------------------------------------------------------------------------------
 
-Display EQU 200H                                            ; Endereço de início do display de 7 segmentos
+Display_beginning EQU 200H                                            ; Endereço de início do display de 7 segmentos
 
 Display_end EQU 26FH                                        ; Endereço de fim do display de 7 segmentos
 
@@ -101,10 +101,10 @@ Principio:
     MOV SP, StackPointer
     CALL LimpaDisplay
     CALL LimpaPerifericos
-    MOV R0, ON_OFF
 
 LeOnOff:
 
+    MOV R0, ON_OFF
     MOVB R1, [R0]
     CMP R1, 1
     JNE LeOnOff
@@ -112,27 +112,44 @@ LeOnOff:
 Ligado:
 
     MOV R2, Display_MenuInicial
+    CALL LimpaDisplay
     CALL MostraDisplay
     CALL LimpaPerifericos
 
 LeOpcao:
 
 	MOV R0, Opcao                                           ; R0 tem o endereço do botão opção
-    MOV R4, [R3]                                            ; Leitura do periferico Opção
-    CMP R4, 0
+    MOVB R1, [R0]                                           ; Leitura do periferico Opção
+    CMP R1, 0
 	JEQ LeOpcao                                             ; Se o valor do botão for 0, refaz a leitura
 	
-	CMP R4, OpcaoComprar
-	JEQ RotinaComprar
+	CMP R1, OpcaoComprar
+	JEQ RotinaComprarIntermedio
 
-	CMP R4, OpcaoUsarCartao
-	JEQ RotinaUsarCartao
+	CMP R1, OpcaoUsarCartao
+	JEQ RotinaUsarCartaoIntermedio
 
-    CMP R4, OpcaoStock
-	JEQ RotinaStock
+    CMP R1, OpcaoStock
+	JEQ RotinaStockIntermedio
 	
 	CALL RotinaErro
 	JMP Ligado
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                       Jumps para as Rotinas
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+LigadoIntermedio:
+    JMP Ligado
+
+RotinaComprarIntermedio:
+    JMP RotinaComprar
+
+RotinaUsarCartaoIntermedio:
+    JMP RotinaUsarCartao
+
+RotinaStockIntermedio:
+    JMP RotinaStock
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                       Rotina Limpa Display
@@ -146,7 +163,7 @@ LimpaDisplay:
 	PUSH R1 
 	PUSH R2 
 
-	MOV R0, Display
+	MOV R0, Display_beginning
 	MOV R1, Display_end
 	
 CicloLimpa:
@@ -170,9 +187,23 @@ CicloLimpa:
 
 LimpaPerifericos:
 
+    PUSH R0
+    PUSH R1
+    PUSH R2
+
     MOV R0, ON_OFF
     MOV R1, Opcao
     MOV R2, OK
+
+    MOV R9, 0
+
+    MOVB [R0], R9
+    MOVB [R1], R9
+    MOVB [R2], R9
+
+    POP R2
+    POP R1
+    POP R0
     RET
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
@@ -188,13 +219,13 @@ MostraDisplay:
     PUSH R1
     PUSH R3
 
-    MOV R0, Display
+    MOV R0, Display_beginning
     MOV R1, Display_end
 
 CicloDisplay:
 
     MOV R3, [R2]
-    MOVB [R0], R3
+    MOV [R0], R3
     ADD R0, 2
     ADD R2, 2
     CMP R0, R1
@@ -208,39 +239,109 @@ CicloDisplay:
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                           Rotina Comprar
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; Mostra o display
+;
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
 RotinaComprar:
 
     MOV R2, Display_MenuComprar
+    CALL LimpaDisplay
     CALL MostraDisplay
     CALL LimpaPerifericos
+
+LeOpcaoComprar:
+
+	MOV R0, Opcao                                           
+    MOVB R1, [R0]                                         
+    CMP R1, 0
+	JEQ LeOpcaoComprar                                     
+	
+	CMP R1, OpcaoEst1
+	JEQ LigadoIntermedio
+
+	CMP R1, OpcaoEst2
+	JEQ LigadoIntermedio
+
+    CMP R1, OpcaoEst3
+	JEQ LigadoIntermedio
+
+	CMP R1, OpcaoEst4
+	JEQ LigadoIntermedio
+
+    CMP R1, OpcaoEst5
+	JEQ LigadoIntermedio
+
+    CMP R1, OpcaoCancelarCompra
+	JEQ LigadoIntermedio
+	
+	CALL RotinaErro
+	JMP RotinaComprar
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                         Rotina Usar Cartão
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; Mostra o display
+;
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
 RotinaUsarCartao:
 
-    JMP Ligado
+    MOV R2, 
+    CALL LimpaDisplay
+    CALL MostraDisplay
+    CALL LimpaPerifericos
+
+LeOpcaoUsarCartao:
+
+	MOV R0, Opcao                                           
+    MOVB R1, [R0]                                         
+    CMP R1, 0
+	JEQ LeOpcaoUsarCartao                                   
+	
+	CMP R1, OpcaoContinuarCartao
+	JEQ LigadoIntermedio
+
+	CMP R1, OpcaoCancelarCartao
+	JEQ LigadoIntermedio
+	
+	CALL RotinaErro
+	JMP RotinaComprar
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                            Rotina Stock
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; Mostra o display
+;
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
 RotinaStock:
 
-    JMP Ligado
+    MOV R2, 
+    CALL LimpaDisplay
+    CALL MostraDisplay
+    CALL LimpaPerifericos
+
+LeOpcaoStock:
+
+	MOV R0, Opcao                                           
+    MOVB R1, [R0]                                         
+    CMP R1, 0
+	JEQ LeOpcaoStock                                  
+	
+	CMP R1, OpcaoSeguinteStock
+	JEQ LigadoIntermedio
+
+	CMP R1, OpcaoAnteriorStock
+	JEQ LigadoIntermedio
+
+    CMP R1, OpcaoSairStock
+	JEQ LigadoIntermedio
+	
+	CALL RotinaErro
+	JMP RotinaComprar
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                            Rotina Erro
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; Mostra o display
+;
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
 RotinaErro:
