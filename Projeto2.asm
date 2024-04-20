@@ -37,6 +37,11 @@ OpcaoComprarCartao EQU 1
 OpcaoRecarregarCartao EQU 2
 
 ; Menu Stock
+OpcaoConsultarStock EQU 1
+OpcaoInserirStock EQU 2
+OpcaoVoltarStock EQU 5
+
+; Menu Consultar Stock
 OpcaoSeguinteStock EQU 1
 OpcaoAnteriorStock EQU 2
 OpcaoSairStock EQU 5
@@ -83,7 +88,6 @@ Display_Talao:                                              ;Display do Talao
 
     String "   PEPE GERADO  "
     String "       001      "
-    String "                "
 	String "            .00 "
 	String "Inserido..  .00 "
 	String "Troco...... .00 "
@@ -96,20 +100,22 @@ Display_CodigoPEPE:                                         ;Display de introdu�
     
     String "  INTRODUZA N.  "
     String "      PEPE      "
-    String " XXXXX          "
+    String "                "
+    String "      XXXXX     "
     String "                "
     String " 1 - Continuar  "
     String " 5 - Cancelar   "
 
 PLACE 2400H
-                                                            ;Display de nº pepe errado
-Display_NPEPEErrado:											
+
+Display_NPEPEErrado:										;Display de nº pepe errado	
 	String " ---- ERRO ---- "
 	String "                "
 	String "     Nº PEPE    "
 	String "    incorreto   "
 	String "                "
 	String " 7 - Voltar     "
+	String " ---- ERRO ---- "
 
 PLACE 2500H
 
@@ -121,68 +127,68 @@ Display_MenuUsarPEPE:                                      ;Display do menu de c
     String "                "
     String "1 - Comprar     "
     String "2 - Recarregar  "
+    String "                "
 
 PLACE 2600H
-                                                           ;Display de pagamento
-Display_Pagamento:
+
+Display_Pagamento:                                         ;Display de pagamento
     String "   Pagamento    "
 	String "   Inserido:    "
 	String "     0.00       "
 	String "     Euros      "
 	String "                "
 	String "6 - Cancelar    "
-	String "9 - Confirmar    "
+	String "9 - Confirmar   "
 
 Place 2700H  											  
-                                                           ;Display para a falta de moedas de troco
-Display_FaltaMoedasTroco:
+
+Display_FaltaMoedasTroco:                                  ;Display para a falta de moedas de troco
 	String "---- Alerta ----"
-    String "                "
 	String "     Moedas     "
 	String "    Em stock    "
 	String "  insuficientes "
 	String "   para troco   "
 	String "                "
-	String " 1 - Continuar   "
+	String " 1 - Continuar  "
 
 Place 2800H
-                                                          ; Display para a falta inserir moedas para pagamento
-Display_FaltaInserirMoedas:
-    String "---- Alerta ----"
-    String "                "
+
+Display_FaltaInserirMoedas:                               ;Display para a falta inserir moedas para pagamento
+	String " ---- ERRO ---- "
 	String " Valor inserido "
     String "       é        "
 	String "  insuficiente  "
 	String "                "
 	String " 7 - Voltar     "
+	String " ---- ERRO ---- "
 
 Place 2900H
-                                                          ; Display para a falta de saldo no cartão
-Display_Agradecimento:									
+
+Display_Agradecimento:									  ;Display para a falta de saldo no cartão
 	String "!!!!!!!!!!!!!!!!"
 	String "    Obrigado    "
 	String "    Pela sua    "
 	String "     Compra     "
 	String "                "
-	String "  Volte sempre  "
-    String "                "	
 	String " 1 - Continuar  "
+	String "!!!!!!!!!!!!!!!!"
 
 Place 2A00H
-                                                          ; Display para gerir o stock
-Display_Stock:                                                          
+
+Display_Stock:                                            ;Display para gerir o stock              
+	String "                "
 	String "     STOCK      "
 	String "                "
 	String " 1 - Consultar  "
 	String " 2 - Inserir    "
 	String " 7 - Voltar     "
+	String "                "
 
 Place 2B00H
-                                                          ; Display para consultar o stock                                                     
-Display_ConsultarStock:									
+                                                   
+Display_ConsultarStock:									  ;Display para consultar o stock
 	String "    CONSULTA    "
 	String "     STOCK      "
-	String "                "
 	String " 10 Cent...  0  "
 	String " 20 Cent...  0  "
 	String " 50 Cent...  0  "
@@ -192,30 +198,31 @@ Display_ConsultarStock:
 Place 2C00H
 
 Display_InserirMoedas1:									    ;Display da inserção de Moedas stock
-	String "    INSERCAO      "
-	String "   DE  MOEDAS     "
-	String "1 - 10 Cent...  0 "
-	String "2 - 20 Cent...  0 "
-	String "3 - 50 Cent...  0 "
-	String " 5 - Seguinte     "
-	String " 7 - Voltar       "
+	String "    INSERCAO    "
+	String "   DE  MOEDAS   "
+	String "1 - 10 Cent...0 "
+	String "2 - 20 Cent...0 "
+	String "3 - 50 Cent...0 "
+	String "5 - Seguinte    "
+	String "7 - Voltar      "
 
 Place 2D00H
 
 Display_InserirMoedas2:										;Display da inserção de Moedas stock
-	String "    INSERCAO      "
-	String "  DE  MOEDAS      "
-	String "1 - 1 Euro....  0 "
-	String "2 - 2 Euros...  0 "
-	String " 7 - Voltar       "
-	String "  9 - Sair        "	
+	String "    INSERCAO    "
+	String "   DE  MOEDAS   "
+	String "1 - 1 Euro....0 "
+	String "2 - 2 Euros...0 "
+	String "                "
+	String "7 - Voltar      "
+	String "9 - Sair        "	
 
 Place 2E00H
 
 Display_QuantasInserir:										 ;Display da quantidade de moedas a inserir no stock
 	String "    Quantas     "
-	String " moedas  deseja "
-	String "    inserir ?   "
+	String "moedas inserir ?"
+	String "                "
 	String "       0        "
 	String "                "
 	String "1 - Confirmar   "
@@ -226,11 +233,11 @@ Place 2E50H
 Display_InseridoSucesso:									 ;Display da mensagem de inserção de dinheiro stock
 	String "!!!!!!!!!!!!!!!!"
 	String "   Dinheiro     "
-	String "   inserido     "
-	String "     com        "
+	String "  inserido com  "
 	String "    sucesso     "
 	String "                "
-	String "1 -  Seguinte   "
+	String "                "
+	String "1 - Seguinte    "
    
    
 ;-----------------------------------------------------------------------------------------------------------------------------------------
@@ -441,7 +448,7 @@ LeOpcaoComprar:
 
 RotinaUsarCartao:
 
-    MOV R2, 
+    MOV R2, Display_CodigoPEPE
     CALL LimpaDisplay
     CALL MostraDisplay
     CALL LimpaPerifericos
@@ -460,7 +467,7 @@ LeOpcaoUsarCartao:
 	JEQ LigadoIntermedio
 	
 	CALL RotinaErro
-	JMP RotinaComprar
+	JMP RotinaUsarCartao
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                            Rotina Stock
@@ -470,7 +477,7 @@ LeOpcaoUsarCartao:
 
 RotinaStock:
 
-    MOV R2, 
+    MOV R2, Display_Stock
     CALL LimpaDisplay
     CALL MostraDisplay
     CALL LimpaPerifericos
@@ -482,17 +489,17 @@ LeOpcaoStock:
     CMP R1, 0
 	JEQ LeOpcaoStock                                  
 	
-	CMP R1, OpcaoSeguinteStock
+	CMP R1, OpcaoConsultarStock
 	JEQ LigadoIntermedio
 
-	CMP R1, OpcaoAnteriorStock
+	CMP R1, OpcaoInserirStock
 	JEQ LigadoIntermedio
 
-    CMP R1, OpcaoSairStock
+    CMP R1, OpcaoVoltarStock
 	JEQ LigadoIntermedio
 	
 	CALL RotinaErro
-	JMP RotinaComprar
+	JMP RotinaStock
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                            Rotina Erro
