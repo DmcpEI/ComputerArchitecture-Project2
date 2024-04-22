@@ -63,6 +63,38 @@ StackPointer EQU 1000H		                                ; Endereço do Stack Poi
 
 ;Preços dos bilhetes----------------------------------------------------------------------------------------------------------------------
 
+BEstacao1Preco EQU 150
+BEstacao2Preco EQU 250
+BEstacao3Preco EQU 400
+BEstacao4Preco EQU 550
+BEstacao5Preco EQU 700
+
+;Dinheiro--------------------------------------------------------------------------------------------------------------------------------
+
+; Disponibilidade das moedas para troco
+DispMoedas10 EQU 300H
+DispMoedas20 EQU 310H
+DispMoedas50 EQU 320H
+DispMoedas1	EQU 330H
+DispMoedas2 EQU 340H
+DispNotas5 EQU 350H
+
+; Número de moedas em operação de compra
+OprMoedas10 EQU 360H
+OprMoedas20 EQU 370H
+OprMoedas50 EQU 380H
+OprMoedas1 EQU 390H
+OprMoedas2 EQU 400H
+OprNotas5 EQU 410H
+
+; Número de moedas em stock
+StockMoedas10 EQU 420H
+StockMoedas20 EQU 430H
+StockMoedas50 EQU 440H
+StockMoedas1 EQU 450H
+StockMoedas2 EQU 460H
+StockNotas5 EQU 470H
+
 
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
