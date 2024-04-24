@@ -252,7 +252,7 @@ Display_MenuUsarPEPE:
 
 PLACE 2600H
 
-Display_Pagamento:
+Display_ErroEspacoInsuficiente:
     String "   Pagamento    "
 	String "   Inserido:    "
 	String "     0.00       "
@@ -274,28 +274,6 @@ Display_FaltaMoedasTroco:
 
 Place 2800H
 
-Display_FaltaInserirMoedas:
-	String " ---- ERRO ---- "
-	String " Valor inserido "
-    String "       é        "
-	String "  insuficiente  "
-	String "                "
-	String " 7 - Voltar     "
-	String " ---- ERRO ---- "
-
-Place 2900H
-
-Display_Agradecimento:
-	String "!!!!!!!!!!!!!!!!"
-	String "    Obrigado    "
-	String "    Pela sua    "
-	String "     Compra     "
-	String "                "
-	String " 1 - Continuar  "
-	String "!!!!!!!!!!!!!!!!"
-
-Place 2A00H
-
 Display_VerificacaoStock:           
 	String "     STOCK      "
 	String "                "
@@ -305,7 +283,7 @@ Display_VerificacaoStock:
 	String "1 - Consultar   "
 	String "7 - Cancelar    "
 
-Place 2B00H
+Place 2900H
                                                    
 Display_ConsultarStock1:
 	String "    CONSULTA    "
@@ -316,7 +294,7 @@ Display_ConsultarStock1:
     String "5 - Seguinte    "
 	String "7 - Sair        "
 
-Place 2C00H
+Place 2A00H
 
 Display_ConsultarStock2:
 	String "    CONSULTA    "
@@ -327,7 +305,7 @@ Display_ConsultarStock2:
 	String "6 - Anterior    "
 	String "7 - Sair        "
 	
-Place 2D00H
+Place 2B00H
 
 Display_InserirDinheiro1:
 	String "    INSERCAO    "
@@ -338,7 +316,7 @@ Display_InserirDinheiro1:
 	String "5 - Seguinte    "
 	String "7 - Cancelar    "
 
-Place 2E00H
+Place 2C00H
 
 Display_InserirDinheiro2:
 	String "    INSERCAO    "
@@ -349,7 +327,7 @@ Display_InserirDinheiro2:
 	String "5 - Seguinte    "
 	String "7 - Cancelar    "
 
-Place 2F00H
+Place 2D00H
 
 Display_InserirDinheiro3:
 	String "    INSERCAO    "
@@ -360,31 +338,9 @@ Display_InserirDinheiro3:
 	String "5 - Seguinte    "
 	String "7 - Cancelar    "
 
-Place 3000H
+Place 2E00H
 
-Display_QuantasInserir:
-	String "    Quantas     "
-	String " moedas / notas "
-	String "    inserir?    "
-	String "       0        "
-	String "                "
-	String "1 - Confirmar   "
-	String "7 - Cancelar    "
-
-Place 3100H
-
-Display_InseridoSucesso:
-	String "!!!!!!!!!!!!!!!!"
-	String "                "
-	String "    Dinheiro    "
-	String "  inserido com  "
-	String "    sucesso     "
-	String "                "
-	String "1 - Seguinte    "
-
-Place 3200H
-
-Display_DinheiroInseridoDevolvido:      
+Display_TrocoDevolvido:      
 	String "!!!!!!!!!!!!!!!!"
 	String "                "
 	String "    Dinheiro    "
@@ -393,7 +349,7 @@ Display_DinheiroInseridoDevolvido:
 	String "                "
 	String "1 - Seguinte    "   
 
-Place 3300H
+Place 2F00H
 
 Display_PalavraPasseErrada:
 	String " ---- ERRO ---- "
@@ -658,22 +614,6 @@ DinheiroSuficiente:
     POP R1
     POP R0
     RET
-
-;-----------------------------------------------------------------------------------------------------------------------------------------
-;									                               Jumps
-;-----------------------------------------------------------------------------------------------------------------------------------------
-
-LigadoIntermedio2:
-    JMP LigadoIntermedio
-
-RotinaComprarIntermedio2:
-    JMP RotinaComprarIntermedio
-
-RotinaUsarCartaoIntermedio2:
-    JMP RotinaUsarCartaoIntermedio
-
-RotinaStockIntermedio2:
-    JMP RotinaStockIntermedio
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                        Rotina Escrever Display
@@ -952,10 +892,6 @@ EscreverTalao:
 
 	; Escrever o número do PEPE
 	MOV R5, NPepes									; R5 tem o endereço do número de PEPEs
-	MOV R6, [R5]									; R6 tem o número de PEPEs
-	ADD R6, 1										; Adiciona 1 ao número de PEPEs
-	MOV [R5], R6									; Atualiza o número de PEPEs
-
 	MOV R8, [R5]									; R8 tem o número de PEPEs
 	MOV R9, R2										; R9 tem o endereço a escrever o número do PEPE
 	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve o número do PEPE no display
@@ -1018,6 +954,110 @@ EscreverTalao:
 	POP R7
 	POP R6
 	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                  Rotina Criar PEPE
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Cria um novo PEPE guardando na base de dados dos PEPEs
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+CriarPEPE:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+
+	MOV R0, NPepes
+	MOV R1, [R0]
+	MOV R2, BaseDeDadosPEPE							; R2 tem o endereço da base de dados dos PEPEs
+	MOV R4, 16										; R4 tem o valor 16 para passar de endereço em endereço
+
+	ADD R1, 1 										; Adiciona 1 ao número de PEPEs
+	MOV [R0], R1									; Atualiza o número de PEPEs
+
+	MOV R11, R1										; R11 tem o número do PEPE a ser criado para ser carregado com o valor dos bilhetes depois da primeira compra
+
+	SUB R2, R4										; Subtrai 16 ao endereço da base de dados dos PEPEs para fins de ciclo de modo que ao adicionar começar no primeiro lugar da base de dados
+
+	MOV R5, 0										; R5 tem o valor 0 para fins de contagem de linhas para colocar o novo PEPE no lugar correto da base de dados dos PEPEs
+	MOV R6, 10										; R6 tem o valor 10 para fins de comparação com o número do PEPE a ser criado, de modo a saber se já existem 10 PEPEs
+
+CicloCriarPEPE:
+
+	CMP R1, R6										; Compara o número do PEPE a ser criado com 10
+	JGT MaximoCriado								; Se o número do PEPE a ser criado for maior que 10, salta para a etiqueta MaximoCriado
+	
+	ADD R5, 1										; Adiciona 1 ao número de linhas para colocar o novo PEPE
+	ADD R2, R4										; Adiciona 16 ao endereço da base de dados dos PEPEs para passar para o próximo lugar da base de dados
+	CMP R5, R1										; Compara o número de linhas para colocar o novo PEPE com o número do PEPE a ser criado
+	JNE CicloCriarPEPE								; Se o número de linhas para colocar o novo PEPE for diferente do número do PEPE a ser criado, repete o ciclo
+
+	MOV R3, R1										; R3 tem o número do PEPE a ser criado
+	MOV [R2], R3									; Atualiza a base de dados dos PEPEs com o número do PEPE a ser criado
+
+	JMP FimCicloCriarPEPE							; Salta para a etiqueta FimCicloCriarPEPE
+
+MaximoCriado:
+
+	MOV R10, 1										; R10 tem o valor 1 para sinalizar que não tem lugar para mais nenhum PEPE
+
+	JMP FimCicloCriarPEPE							; Salta para a etiqueta FimCicloCriarPEPE
+
+FimCicloCriarPEPE:
+
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                      Rotina Carregar PEPE
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Carrega um PEPE com um valor monetário
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; R10 -> Valor a ser carregado no PEPE
+; R11 -> Número do PEPE a ser carregado
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+CarregarPEPE:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+
+	MOV R0, BaseDeDadosPEPE							; R0 tem o endereço da base de dados dos PEPEs
+	MOV R1, 16										; R1 tem o valor 16 para passar de endereço em endereço
+	MOV R3, R10										; R3 tem o valor a ser carregado no PEPE
+	MOV R4, R11										; R4 tem o número do PEPE a ser carregado
+
+	SUB R0, R1										; Subtrai 16 ao endereço da base de dados dos PEPEs para fins de ciclo de modo que ao adicionar começar no primeiro lugar da base de dados dos PEPEs
+
+CicloCarregarPEPE:
+
+	ADD R0, R1										; Adiciona 16 ao endereço da base de dados dos PEPEs para passar para o próximo lugar da base de dados
+	MOV R2, [R0]									; R2 tem o número do PEPE atual
+	CMP R2, R4										; Compara o número do PEPE atual com o número do PEPE a ser carregado
+	JNE CicloCarregarPEPE							; Se o número do PEPE atual for diferente do número do PEPE a ser carregado, repete o ciclo
+
+	ADD R0, 4										; Adiciona 4 ao endereço da base de dados dos PEPEs para passar para o lugar do valor monetario do PEPE
+	MOV [R0], R3									; Atualiza o valor monetario do PEPE
+
 	POP R4
 	POP R3
 	POP R2
@@ -1114,12 +1154,12 @@ LeOpcaoComprar:
 	JEQ EscolhaBilhetes
 
     CMP R1, OpcaoCancelarCompra
-	JEQ VoltarInicio
+	JEQ VoltarInicioCompra
 	
 	CALL RotinaErro
 	JMP RotinaComprar
 
-VoltarInicio:
+VoltarInicioCompra:
 	JMP Ligado
 
 EscolhaBilhetes:
@@ -1170,7 +1210,7 @@ LeOpcaoMostraPrecoTotal:
 	JEQ InserirDinheiro1
 
 	CMP R1, OpcaoCancelarPrecoTotal
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioCompra
 	
 	CALL RotinaErro
 	JMP MostraPrecoTotal
@@ -1204,7 +1244,7 @@ LeOpcaoInserirDinheiro1:
 	JEQ InserirDinheiro2
 
 	CMP R1, OpcaoCancelarInserir1
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioCompra
 	
 	CALL RotinaErro
 	JMP InserirDinheiro1
@@ -1238,7 +1278,7 @@ LeOpcaoInserirDinheiro2:
 	JEQ InserirDinheiro3
 
 	CMP R1, OpcaoCancelarInserir2
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioCompra2
 	
 	CALL RotinaErro
 	JMP InserirDinheiro2
@@ -1258,17 +1298,17 @@ LeOpcaoInserirDinheiro3:
 	
 	;MOV R5, Valor10Euros
 	CMP R1, Opcao10EuroInserir3
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioCompra2
 
 	;MOV R5, Valor20Euros
 	CMP R1, Opcao20EuroInserir3
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioCompra2
 
 	CMP R1, OpcaoSeguinteInserir3
 	JEQ InserirDinheiro1
 
 	CMP R1, OpcaoCancelarInserir3
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioCompra2
 	
 	CALL RotinaErro
 	JMP InserirDinheiro3
@@ -1313,7 +1353,18 @@ Pago:
 	SUB R7, R6										; Subtrai o preço total da compra ao valor total inserido pelo utilizador
 	MOV [R5], R7									; Atualiza o troco da compra
 
-	CALL EscreverTalao								; Chama a rotina EscreverTalao, que escreve os valores do número do PEPE criado (atualiza este tmb), preco total, valor total inserido e troco no talão	
+	MOV R10, 0 										; R10 tem o valor 0 para saber se tem espaço para criar um novo PEPE
+
+	CALL CriarPEPE									; Chama a rotina CriarPEPE, que cria um novo PEPE	
+
+	CMP R10, 1 										; Compara o valor de R10 com 1, que quer dizer que não tem espaço para criar um novo PEPE
+	;JEQ SemEspaco									; Se o valor de R10 for 1, salta para a etiqueta SemEspaco
+
+	CALL EscreverTalao								; Chama a rotina EscreverTalao, que escreve os valores do número do PEPE criado, preco total, valor total inserido e troco no talão
+
+	MOV R5, PrecoTotalCompra						; R5 tem o endereço do preço total da compra
+	MOV R10, [R5]									; R11 tem o valor do preço total da compra
+	CALL CarregarPEPE								; Chama a rotina CarregarPEPE, que carrega o valor do preço total da compra no PEPE criado
 
 LeOpcaoPago:
 
@@ -1323,10 +1374,15 @@ LeOpcaoPago:
 	JEQ LeOpcaoPago                                     
 	
 	CMP R1, OpcaoContinuarTalao
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioCompra2
 	
 	CALL RotinaErro
 	JMP Pago
+
+VoltarInicioCompra2:
+	JMP Ligado
+
+;SemEspaco:
 	
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                         Etiqueta Usar Cartão
@@ -1348,29 +1404,16 @@ LeOpcaoUsarCartao:
 	JEQ LeOpcaoUsarCartao                                   
 	
 	CMP R1, OpcaoContinuarCartao
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioUsarCartao
 
 	CMP R1, OpcaoCancelarCartao
-	JEQ LigadoIntermedio3
+	JEQ VoltarInicioUsarCartao
 	
 	CALL RotinaErro
 	JMP RotinaUsarCartao
 
-;-----------------------------------------------------------------------------------------------------------------------------------------
-;									                               Jumps
-;-----------------------------------------------------------------------------------------------------------------------------------------
-
-LigadoIntermedio3:
-    JMP LigadoIntermedio2
-
-RotinaComprarIntermedio3:
-    JMP RotinaComprarIntermedio2
-
-RotinaUsarCartaoIntermedio3:
-    JMP RotinaUsarCartaoIntermedio2
-
-RotinaStockIntermedio3:
-    JMP RotinaStockIntermedio2
+VoltarInicioUsarCartao:
+	JMP Ligado
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                            Etiqueta Stock
@@ -1396,7 +1439,7 @@ LePalavraPasseStock:
 	JEQ ConsultarVerificarStock						; Se o valor do botão for igual à opção de consultar stock, salta para a etiqueta ConsultarVerificarStock
 
 	CMP R1, OpcaoCancelarVerificarStock				; Compara o valor do botão opção com a opção de cancelar
-	JEQ LigadoIntermedio3							; Se o valor do botão for igual à opção de cancelar, salta para o menu principal
+	JEQ VoltarInicioStock							; Se o valor do botão for igual à opção de cancelar, salta para o menu principal
 
 	CALL RotinaErro
 	JMP VerificacaoStock
@@ -1448,7 +1491,7 @@ LeOpcaoConsultarStock:
 	JEQ ConsultarStock2								; Se o valor do botão for igual à opção de seguinte, salta para a próxima página de stock
 
 	CMP R1, OpcaoSairStock							; Compara o valor do botão opção com a opção de sair
-	JEQ LigadoIntermedio3							; Se o valor do botão for igual à opção de sair, salta para o menu principal
+	JEQ VoltarInicioStock							; Se o valor do botão for igual à opção de sair, salta para o menu principal
 
 	CALL RotinaErro
 	JMP ConsultarStock
@@ -1473,10 +1516,13 @@ LeOpcaoConsultarStock2:
 	JEQ ConsultarStock								; Se o valor do botão for igual à opção de anterior, salta para a página anterior de stock
 
 	CMP R1, OpcaoSairStock							; Compara o valor do botão opção com a opção de sair
-	JEQ LigadoIntermedio3							; Se o valor do botão for igual à opção de sair, salta para o menu principal
+	JEQ VoltarInicioStock							; Se o valor do botão for igual à opção de sair, salta para o menu principal
 
 	CALL RotinaErro
 	JMP ConsultarStock2
+
+VoltarInicioStock:
+	JMP Ligado
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                            Rotina Erro
