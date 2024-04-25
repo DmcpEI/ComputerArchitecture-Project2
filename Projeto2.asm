@@ -1,15 +1,10 @@
+; Periférico de Entrada-----------------------------------------------------------------------------------------------------------------
 
-; Periféricos de Entrada-----------------------------------------------------------------------------------------------------------------
-
-ON_OFF EQU 1A0H                                             ; Botão ON/OFF
-
-Opcao EQU 1B0H                                              ; Botão Opção
-
-OK EQU 1C0H                                                 ; Botão OK
+PER_EN EQU 1A0H                                             ; Botão ON/OFF
 
 ; Periféricos de Saída-------------------------------------------------------------------------------------------------------------------
 
-Display_beginning EQU 200H                                            ; Endereço de início do display de 7 segmentos
+Display_beginning EQU 200H                                  ; Endereço de início do display de 7 segmentos
 
 Display_end EQU 26FH                                        ; Endereço de fim do display de 7 segmentos
 
@@ -59,6 +54,13 @@ OpcaoContinuarInseriuDinheiro EQU 1
 ; Menu Talao
 OpcaoContinuarTalao EQU 1
 
+; Menu Primeira Compra
+OpcaoContinuarPrimeiraCompra EQU 1
+
+; Menu Troco Devolvido
+OpcaoSeguinteTrocoDevolvido EQU 5
+OpcaoSairTrocoDevolvido EQU 7
+
 ; Menu Usar Cartão
 OpcaoContinuarCartao EQU 1
 OpcaoCancelarCartao EQU 5
@@ -99,6 +101,9 @@ StackPointer EQU 1000H		                                ; Endereço do Stack Poi
 ; Stock
 EndPrimeiroLugarStock EQU 22DH								; Endereço do primeiro lugar do display para escrever o valor no stock (da direita para a esquerda)
 
+; Devolução de Troco
+EndPrimeiroLugarTroco EQU 22DH								; Endereço do primeiro lugar do display para escrever o valor do troco (da direita para a esquerda)
+
 ; Preço Total
 EndEscreverPrecoTotalCentimos EQU 239H						; Endereço do primeiro lugar do display para escrever os centimos do preço total (da direita para a esquerda)
 EndEscreverPrecoTotalEuros EQU 236H							; Endereço do primeiro lugar do display para escrever os euros preço total (da direita para a esquerda)
@@ -122,29 +127,25 @@ BEstacao5Preco EQU 700
 
 ;Dinheiro--------------------------------------------------------------------------------------------------------------------------------
 
-; Disponibilidade das moedas para troco
-DispMoedas10 EQU 300H
-DispMoedas20 EQU 310H
-DispMoedas50 EQU 320H
-DispMoedas1	EQU 330H
-DispMoedas2 EQU 340H
-DispNotas5 EQU 350H
+; Endereços do numero de moedas/notas para troco
+TrocoMoedas10 EQU 300H
+TrocoMoedas20 EQU 310H
+TrocoMoedas50 EQU 320H
+TrocoMoedas1 EQU 330H
+TrocoMoedas2 EQU 340H
+TrocoNotas5 EQU 350H
+TrocoNotas10 EQU 360H
+TrocoNotas20 EQU 370H
 
-; Número de moedas em operação de compra
-OprMoedas10 EQU 360H
-OprMoedas20 EQU 370H
-OprMoedas50 EQU 380H
-OprMoedas1 EQU 390H
-OprMoedas2 EQU 3A0H
-OprNotas5 EQU 3B0H
-
-; Número de moedas em stock
-StockMoedas10 EQU 3C0H
-StockMoedas20 EQU 3D0H
-StockMoedas50 EQU 3E0H
-StockMoedas1 EQU 3F0H
-StockMoedas2 EQU 400H
-StockNotas5 EQU 410H
+; Endereços dos números de moedas/notas em stock
+StockMoedas10 EQU 380H
+StockMoedas20 EQU 390H
+StockMoedas50 EQU 3A0H
+StockMoedas1 EQU 3B0H
+StockMoedas2 EQU 3C0H
+StockNotas5 EQU 3D0H
+StockNotas10 EQU 3E0H
+StockNotas20 EQU 3F0H
 
 ; Valores monetarios
 Valor10Centimos EQU 10
@@ -153,6 +154,8 @@ Valor50Centimos EQU 50
 Valor1Euro EQU 100
 Valor2Euros EQU 200
 Valor5Euros EQU 500
+Valor10Euros EQU 1000
+Valor20Euros EQU 2000
 
 ;Variáveis de Compra---------------------------------------------------------------------------------------------------------------------
 
@@ -166,6 +169,7 @@ TrocoCompra EQU 530H										; Troco a ser devolvido ao utilizador (ValorInseri
 BaseDeDadosPEPE EQU 1000H									; Endereço inicial da base de dados dos PEPEs
 FimBaseDeDadosPEPE EQU 1090H								; Endereço final da base de dados dos PEPEs
 NPepes EQU 10A0H											; Número de PEPEs na base de dados (Máximo de 10 PEPEs)
+NPEPEVerificar EQU 238H										; Número do PEPE a verificar (da direita para a esquerda)
 
 ;Passe do Stock--------------------------------------------------------------------------------------------------------------------------
 
@@ -222,7 +226,7 @@ Display_CodigoPEPE:
     String "  INTRODUZA N.  "
     String "      PEPE      "
     String "                "
-    String "     XXXXX      "
+    String "       XX       "
     String "                "
     String " 1 - Continuar  "
     String " 5 - Cancelar   "
@@ -340,17 +344,6 @@ Display_InserirDinheiro3:
 
 Place 2E00H
 
-Display_TrocoDevolvido:      
-	String "!!!!!!!!!!!!!!!!"
-	String "                "
-	String "    Dinheiro    "
-	String "  devolvido com "
-	String "    sucesso     "
-	String "                "
-	String "1 - Seguinte    "   
-
-Place 2F00H
-
 Display_PalavraPasseErrada:
 	String " ---- ERRO ---- "
 	String " PALAVRA-PASSE  "
@@ -360,7 +353,7 @@ Display_PalavraPasseErrada:
 	String " 7 - Voltar     "
 	String " ---- ERRO ---- "
 
-Place 3400H
+Place 2F00H
 
 Display_EscolheuBilhete:
 	String "----------------"
@@ -371,7 +364,7 @@ Display_EscolheuBilhete:
 	String "1 - Sim  2 - Nao"
 	String "----------------"
 
-Place 3500H
+Place 3000H
 
 Display_PrecoTotal:
 	String "----------------"
@@ -382,7 +375,7 @@ Display_PrecoTotal:
 	String "2 - Cancelar    "
 	String "----------------"
 
-Place 3600H
+Place 3100H
 
 Display_Erro:
 	String " ---- ERRO ---- "
@@ -393,7 +386,7 @@ Display_Erro:
 	String " 7 - Voltar     "
 	String " ---- ERRO ---- "
 
-Place 3700H
+Place 3200H
 
 Display_InseriuDinheiro:
 	String "----------------"
@@ -403,6 +396,50 @@ Display_InseriuDinheiro:
 	String "                "
 	String "1 - Continuar   "
 	String "----------------"
+
+Place 3300H
+
+Display_PrimeiraCompra:
+	String "    PARABENS    "
+	String "VIAGEM GRATUITA!"
+	String "                "
+	String "VALOR DA COMPRA "
+	String "   CARREGADO    "
+	String "   NO CARTAO    "
+	String "1 - Continuar   "
+
+Place 3400H
+
+Display_TrocoDevolvido1:      
+	String "  RETIRE O SEU  "
+	String "     TROCO!     "
+	String " 10 Cent...     "
+	String " 20 Cent...     "
+	String " 50 Cent...     "
+    String "5 - Seguinte    "
+	String "7 - Sair        "
+
+Place 3500H
+
+Display_TrocoDevolvido2:      
+	String "  RETIRE O SEU  "
+	String "     TROCO!     "
+	String " 1 Euro....     "
+	String " 2 Euros...     "
+	String " 5 Euros...     "
+	String "5 - Seguinte    "
+	String "7 - Sair        "
+
+Place 3600H
+
+Display_TrocoDevolvido3:      
+	String "  RETIRE O SEU  "
+	String "     TROCO!     "
+	String " 10 Euros..     "
+	String " 20 Euros..     "
+	String "                "
+	String "5 - Seguinte    "
+	String "7 - Sair        "  
    
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;                                                      Código de Inicialização
@@ -431,7 +468,7 @@ Principio:
 
 LeOnOff:
 
-    MOV R0, ON_OFF
+    MOV R0, PER_EN
     MOVB R1, [R0]
     CMP R1, 1
     JNE LeOnOff
@@ -445,7 +482,7 @@ Ligado:
 
 LeOpcao:
 
-	MOV R0, Opcao                                           ; R0 tem o endereço do botão opção
+	MOV R0, PER_EN                                           ; R0 tem o endereço do botão opção
     MOVB R1, [R0]                                           ; Leitura do periferico Opção
     CMP R1, 0
 	JEQ LeOpcao                                             ; Se o valor do botão for 0, refaz a leitura
@@ -515,21 +552,13 @@ CicloLimpa:
 LimpaPerifericos:
 
     PUSH R0
-    PUSH R1
-    PUSH R2
 
-    MOV R0, ON_OFF									; R0 tem o endereço do botão ON/OFF
-    MOV R1, Opcao									; R1 tem o endereço do botão Opção
-    MOV R2, OK										; R2 tem o endereço do botão OK
+    MOV R0, PER_EN									; R0 tem o endereço do botão PER_ENT
 
     MOV R9, 0										; R9 tem o valor 0
 
     MOVB [R0], R9									; Coloca o valor 0 no botão ON/OFF
-    MOVB [R1], R9									; Coloca o valor 0 no botão Opção
-    MOVB [R2], R9									; Coloca o valor 0 no botão OK
 
-    POP R2
-    POP R1
     POP R0
     RET
 
@@ -577,35 +606,29 @@ VerificaDinheiro:
     PUSH R4
 	PUSH R5
 	PUSH R6
-	PUSH R7
 
     MOV R0, StockMoedas10							; R0 tem o endereço do stock de moedas de 10 centimos (Que são as primeiras na memória)
-    MOV R1, StockNotas5								; R1 tem o endereço do stock de notas de 5 euros (Que são as ultimas na memória)
+    MOV R1, StockNotas20 							; R1 tem o endereço do stock de notas de 20 euros (Que são as ultimas na memória)
 	MOV R5, 16										; R5 tem o valor de 10 para passar de endereço em endereço
-	MOV R6, DispMoedas10							; R6 tem o endereço da disponibilidade de moedas de 10 centimos
-	MOV R7, DispNotas5								; R7 tem o endereço da disponibilidade de notas de 5 euros
+	MOV R6, 10 										; R6 tem o valor 10 para fins de adição
 
 CicloVerificaDinheiro:
 
 	MOV R2, [R0]									; R2 tem a quantidade de dinheiro do valor monetário atual
-	MOV R3, 5										; R3 tem o valor de 5 para comparar com a quantidade de dinheiro do valor monetário atual
-	CMP R2, R3										; Compara a quantidade de dinheiro do valor monetário atual com 5
-	JGE DinheiroSuficiente							; Se a quantidade de dinheiro do valor monetário atual for maior ou igual a 5, salta para a etiqueta DinheiroSuficiente
-	MOV R4, 5										; R4 tem o valor de 5 de modo a obter a diferença
-	SUB R4, R2										; R4 tem a quantidade de dinheiro do valor monetário atual que falta para ser 5
-	ADD R2, R4										; Adiciona a quantidade de dinheiro do valor monetário atual que falta para ser 5
-	MOVB [R0], R2									; Atualiza a quantidade de dinheiro do valor monetário atual
-	MOV R4, 1										; R4 tem o valor 1 de modo a atualizar a disponibilidade
-	MOVB [R6], R4									; Atualiza a disponibilidade do valor monetário atual
+	MOV R3, R6										; R3 tem o valor 10
+	CMP R2, R3										; Compara a quantidade de dinheiro do valor monetário atual com 10
+	JGE DinheiroSuficiente							; Se a quantidade de dinheiro do valor monetário atual for maior ou igual a 10, salta para a etiqueta DinheiroSuficiente
+	MOV R4, R6										; R4 tem o valor 10 para obter a diferença entre a quantidade de dinheiro do valor monetário atual e 10
+	SUB R4, R2										; Subtrai a quantidade de dinheiro do valor monetário atual a 10
+	ADD R2, R4										; Adiciona a diferença entre a quantidade de dinheiro do valor monetário atual e 10 à quantidade de dinheiro do valor monetário atual
+	MOV [R0], R2									; Atualiza a quantidade de dinheiro do valor monetário atual
 
 DinheiroSuficiente:
 
 	ADD R0, R5										; Adiciona 16 ao endereço do valor monetário atual
-	ADD R6, R5										; Adiciona 16 ao endereço da disponibilidade do valor monetário atual
-	CMP R0, R1										; Compara o endereço do valor monetário atual com o endereço do valor monetário de 5 euros
-	JLT CicloVerificaDinheiro						; Se o endereço do valor monetário atual for menor que o endereço do valor monetário de 5 euros, repete o ciclo
+	CMP R0, R1										; Compara o endereço do valor monetário atual com o endereço do stock de notas de 20 euros
+	JLE CicloVerificaDinheiro						; Se o endereço do valor monetário atual for menor ou igual ao endereço do stock de notas de 20 euros, repete o ciclo
 
-	POP R7
 	POP R6
 	POP R5
 	POP R4
@@ -649,51 +672,6 @@ CicloEscreveDisplay:
 
 FimCicloEscreveDisplay:
 
-	POP R3
-	POP R2
-	POP R1
-	POP R0
-	RET
-
-;-----------------------------------------------------------------------------------------------------------------------------------------
-;									                       Rotina Escrever Stock
-;-----------------------------------------------------------------------------------------------------------------------------------------
-; Escreve as quantidades de cada valor monetário do stock da maquina no display
-;-----------------------------------------------------------------------------------------------------------------------------------------
-; R6 -> Quantidade de valores a escrever
-; R7 -> Endereço do primeiro valor a escrever
-;-----------------------------------------------------------------------------------------------------------------------------------------
-
-EscreverStock:
-
-	PUSH R0
-	PUSH R1
-	PUSH R2
-	PUSH R3
-	PUSH R8
-	PUSH R9
-
-	MOV R0, 1										; R0 é o contador de valores escritos e começa a 1
-	MOV R1, R6										; R1 tem a quantidade de valores a escrever
-	MOV R2, R7										; R2 tem o endereço do primeiro valor a escrever
-	MOV R3, 16										; R3 tem o valor 16 que é o número de bytes entre cada valor a escrever
-	MOV R9, EndPrimeiroLugarStock					; R9 tem o endereço do primeiro lugar do display a escrever
-
-CicloEscreveStock:
-
-	MOVB R8, [R2]									; R8 tem a quantidade do valor monetário atual
-	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve a quantidade do valor monetário atual (valor em R8) no display (endereço em R9)
-	ADD R0, 1										; Adiciona 1 ao contador de valores escritos
-	CMP R0, R1										; Compara o contador de valores escritos com a quantidade de valores a escrever
-	JGT FimCicloEscreveStock						; Se o contador de valores escritos for maior que a quantidade de valores a escrever, salta para a etiqueta FimCicloEscreveStock
-	ADD R2, R3										; Adiciona 16 ao endereço do valor monetário atual de modo a passar para o próximo valor monetário
-	ADD R9, R3										; Adiciona 16 ao endereço do display de modo a passar para o próximo lugar do display
-	JMP CicloEscreveStock							; Repete o ciclo
-
-FimCicloEscreveStock:
-
-	POP R9
-	POP R8
 	POP R3
 	POP R2
 	POP R1
@@ -793,6 +771,91 @@ FimAtualizarPrecoEmFalta:
 
 	POP R7
 	POP R6
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                       Rotina Adiciona Stock
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Atualiza o stock de moedas/notas adicionando 1 à quantidade de dinheiro do valor monetário atual
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; R5 -> Valor a adicionar ao stock / inserido pelo utilizador
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+AdicionaStock:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+
+	MOV R0, StockMoedas10							; R0 tem o endereço do stock de moedas de 10 centimos (Que são as primeiras na memória)
+	MOV R1, StockNotas20							; R1 tem o endereço do stock de notas de 20 euros (Que são as ultimas na memória)
+	MOV R3, 16										; R3 tem o valor de 16 para passar de endereço em endereço
+
+CicloAtualizaStock:
+
+	MOV R4, Valor10Centimos 						; R4 tem o valor de 10 centimos
+	CMP R4, R5										; Compara o valor a adicionar ao stock com o valor de 10 centimos
+	JEQ AtualizarStock								; Se o valor a adicionar ao stock for igual ao valor de 10 centimos, salta para a etiqueta AtualizarStock
+
+	ADD R0, R3										; Adiciona 16 ao endereço do valor monetário atual
+
+	MOV R4, Valor20Centimos 						; R4 tem o valor de 20 centimos
+	CMP R4, R5										; Compara o valor a adicionar ao stock com o valor de 20 centimos
+	JEQ AtualizarStock								; Se o valor a adicionar ao stock for igual ao valor de 20 centimos, salta para a etiqueta AtualizarStock
+
+	ADD R0, R3										; Adiciona 16 ao endereço do valor monetário atual
+
+	MOV R4, Valor50Centimos 						; R4 tem o valor de 50 centimos
+	CMP R4, R5										; Compara o valor a adicionar ao stock com o valor de 50 centimos
+	JEQ AtualizarStock								; Se o valor a adicionar ao stock for igual ao valor de 50 centimos, salta para a etiqueta AtualizarStock
+
+	ADD R0, R3										; Adiciona 16 ao endereço do valor monetário atual
+
+	MOV R4, Valor1Euro 								; R4 tem o valor de 1 euro
+	CMP R4, R5										; Compara o valor a adicionar ao stock com o valor de 1 euro
+	JEQ AtualizarStock								; Se o valor a adicionar ao stock for igual ao valor de 1 euro, salta para a etiqueta AtualizarStock
+
+	ADD R0, R3										; Adiciona 16 ao endereço do valor monetário atual
+
+	MOV R4, Valor2Euros 							; R4 tem o valor de 2 euros
+	CMP R4, R5										; Compara o valor a adicionar ao stock com o valor de 2 euros
+	JEQ AtualizarStock								; Se o valor a adicionar ao stock for igual ao valor de 2 euros, salta para a etiqueta AtualizarStock
+	
+	ADD R0, R3										; Adiciona 16 ao endereço do valor monetário atual
+
+	MOV R4, Valor5Euros 							; R4 tem o valor de 5 euros
+	CMP R4, R5										; Compara o valor a adicionar ao stock com o valor de 5 euros
+	JEQ AtualizarStock								; Se o valor a adicionar ao stock for igual ao valor de 5 euros, salta para a etiqueta AtualizarStock
+
+	ADD R0, R3										; Adiciona 16 ao endereço do valor monetário atual
+
+	MOV R4, Valor10Euros 							; R4 tem o valor de 10 euros
+	CMP R4, R5										; Compara o valor a adicionar ao stock com o valor de 10 euros
+	JEQ AtualizarStock								; Se o valor a adicionar ao stock for igual ao valor de 10 euros, salta para a etiqueta AtualizarStock
+
+	ADD R0, R3										; Adiciona 16 ao endereço do valor monetário atual
+
+	MOV R4, Valor20Euros 							; R4 tem o valor de 20 euros
+	CMP R4, R5										; Compara o valor a adicionar ao stock com o valor de 20 euros
+	JEQ AtualizarStock								; Se o valor a adicionar ao stock for igual ao valor de 20 euros, salta para a etiqueta AtualizarStock
+
+	JMP FimAtualizaStock							; Salta para a etiqueta FimAtualizaStock
+
+AtualizarStock:
+
+	MOV R2, [R0]									; R2 tem a quantidade de dinheiro do valor monetário atual
+	ADD R2, 1										; Adiciona 1 à quantidade de dinheiro do valor monetário atual
+	MOV [R0], R2									; Atualiza a quantidade de dinheiro do valor monetário atual
+
+FimAtualizaStock:
+
+	POP R4
+	POP R3
 	POP R2
 	POP R1
 	POP R0
@@ -1066,9 +1129,268 @@ CicloCarregarPEPE:
 	RET
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                      Rotina Devolve Troco
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Devolve o troco da compra, retirando o valor do troco da compra do stock da máquina
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+DevolveTroco:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+
+	MOV R4, TrocoCompra								; R4 tem o endereço do troco da compra
+	MOV R0, [R4]									; R0 tem o troco da compra
+
+CicloDevolveTroco:
+
+	CMP R0, 0										; Compara o troco da compra com 0
+	JZ FimCicloDevolveTroco							; Se o troco da compra for 0, salta para a etiqueta FimCicloDevolveTroco
+
+	MOV R3, TrocoNotas20							; R3 tem o endereço do troco de notas de 20 euros
+
+	MOV R1, R0										; R1 tem o troco da compra
+	MOV R2, 2000 									; R2 tem o valor 2000 para comparar com o troco da compra (20 euros)
+	SUB R1, R2										; Subtrai 2000 ao troco da compra
+	CMP R1, 0										; Compara o troco da compra com 0
+	JGE Devolver									; Se o troco da compra for maior ou igual a 0, salta para a etiqueta Devolver
+
+	MOV R3, TrocoNotas10							; R3 tem o endereço do troco de notas de 10 euros
+
+	MOV R1, R0										; R1 tem o troco da compra
+	MOV R2, 1000 									; R2 tem o valor 1000 para comparar com o troco da compra (10 euros)
+	SUB R1, R2										; Subtrai 1000 ao troco da compra
+	CMP R1, 0										; Compara o troco da compra com 0
+	JGE Devolver									; Se o troco da compra for maior ou igual a 0, salta para a etiqueta Devolver
+
+	MOV R3, TrocoNotas5								; R3 tem o endereço do troco de notas de 5 euros
+
+	MOV R1, R0										; R1 tem o troco da compra
+	MOV R2, 500 									; R2 tem o valor 500 para comparar com o troco da compra (5 euros)
+	SUB R1, R2										; Subtrai 500 ao troco da compra
+	CMP R1, R2										; Compara o troco da compra com 0
+	JGE Devolver									; Se o troco da compra for maior ou igual a 0, salta para a etiqueta Devolver
+
+	MOV R3, TrocoMoedas2							; R3 tem o endereço do troco de moedas de 2 euros
+
+	MOV R1, R0										; R1 tem o troco da compra
+	MOV R2, 200 									; R2 tem o valor 200 para comparar com o troco da compra (2 euros)
+	SUB R1, R2										; Subtrai 200 ao troco da compra
+	CMP R1, 0										; Compara o troco da compra com 0
+	JGE Devolver									; Se o troco da compra for maior ou igual a 0, salta para a etiqueta Devolver
+
+	MOV R3, TrocoMoedas1							; R3 tem o endereço do troco de moedas de 1 euro
+
+	MOV R1, R0										; R1 tem o troco da compra
+	MOV R2, 100 									; R2 tem o valor 100 para comparar com o troco da compra (1 euro)
+	SUB R1, R2										; Subtrai 100 ao troco da compra
+	CMP R1, 0										; Compara o troco da compra com 0
+	JGE Devolver									; Se o troco da compra for maior ou igual a 0, salta para a etiqueta Devolver
+
+	MOV R3, TrocoMoedas50							; R3 tem o endereço do troco de moedas de 50 cêntimos
+
+	MOV R1, R0										; R1 tem o troco da compra
+	MOV R2, 50 										; R2 tem o valor 50 para comparar com o troco da compra (50 cêntimos)
+	SUB R1, R2										; Subtrai 50 ao troco da compra
+	CMP R1, 0										; Compara o troco da compra com 0
+	JGE Devolver									; Se o troco da compra for maior ou igual a 0, salta para a etiqueta Devolver
+
+	MOV R3, TrocoMoedas20							; R3 tem o endereço do troco de moedas de 20 cêntimos
+
+	MOV R1, R0										; R1 tem o troco da compra
+	MOV R2, 20 										; R2 tem o valor 20 para comparar com o troco da compra (20 cêntimos)
+	SUB R1, R2										; Subtrai 20 ao troco da compra
+	CMP R1, 0										; Compara o troco da compra com 0
+	JGE Devolver									; Se o troco da compra for maior ou igual a 0, salta para a etiqueta Devolver
+
+	MOV R3, TrocoMoedas10							; R3 tem o endereço do troco de moedas de 10 cêntimos
+
+	MOV R1, R0										; R1 tem o troco da compra
+	MOV R2, 10 										; R2 tem o valor 10 para comparar com o troco da compra (10 cêntimos)
+	SUB R1, R2										; Subtrai 10 ao troco da compra
+	CMP R1, 0										; Compara o troco da compra com 0
+	JEQ CicloDevolveTroco							; Se o troco da compra for 0, repete o ciclo
+
+Devolver:
+
+	SUB R0, R2  									; Subtrai o valor do valor monetário devolvido ao troco da compra
+	MOV R2, [R3]									; R2 tem o valor atual da quantidade de notas ou moedas desse tipo a devolver
+	ADD R2, 1										; Adiciona 1 ao valor atual da quantidade de notas ou moedas desse tipo a devolver
+	MOV [R3], R2 									; Atualiza o valor da quantidade de notas ou moedas desse tipo a devolver
+	JMP CicloDevolveTroco							; Repete o ciclo
+
+FimCicloDevolveTroco:
+
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                      Rotina Retira Stock
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Retira o stock de moedas/notas para dar como troco
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+RetiraStock:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+
+	MOV R0, TrocoMoedas10 							; R0 tem o endereço das moedas de 10 centimos a dar como troco (Que são as primeiras na memória)
+	MOV R5, TrocoNotas20							; R5 tem o endereço das notas de 20 euros a dar como troco (Que são as ultimas na memória)
+	MOV R1, StockMoedas10							; R1 tem o endereço do stock de moedas de 10 centimos (Que são as primeiras na memória)
+	MOV R2, 16										; R2 tem o valor 16 para passar de endereço em endereço
+
+CicloRetiraStock:
+
+	MOV R3, [R0]									; R3 tem a quantidade de moedas de um certo valor a dar como troco
+	MOV R4, [R1]									; R4 tem a quantidade de moedas de um certo valor no stock
+	CMP R3, R4										; Compara a quantidade de moedas de um certo valor a dar como troco com a quantidade de moedas de um certo valor no stock
+	JGT ErroSemTroco								; Se a quantidade de moedas de um certo valor a dar como troco for maior que a quantidade de moedas de um certo valor no stock, salta para a etiqueta ErroSemTroco
+	SUB R4, R3										; Subtrai a quantidade de moedas de um certo valor a dar como troco à quantidade de moedas de um certo valor no stock
+	MOV [R1], R4									; Atualiza a quantidade de moedas de um certo valor no stock
+
+	ADD R0, R2										; Adiciona 16 ao endereço atual a dar como troco para passar para o próximo valor monetário
+	ADD R1, R2										; Adiciona 16 ao endereço atual no stock para passar para o próximo valor monetário
+	CMP R0, R5										; Compara o endereço atual a dar como troco com o endereço das notas de 20 euros
+	JNE CicloRetiraStock							; Se o endereço atual a dar como troco for diferente do endereço das notas de 20 euros, repete o ciclo
+
+	JMP FimRetiraStock								; Salta para a etiqueta FimRetiraStock
+
+ErroSemTroco:
+
+	MOV R10, 1										; R10 tem o valor 1 para sinalizar que não há troco
+
+FimRetiraStock:
+
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                      Rotina Escrever Troco 
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; R6 -> Quantidade de valores a escrever
+; R7 -> Endereço do primeiro valor a escrever
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+EscreverTroco:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R8
+	PUSH R9
+
+	MOV R0, 1										; R0 é o contador de valores escritos e começa a 1
+	MOV R1, R6										; R1 tem a quantidade de valores a escrever
+	MOV R2, R7										; R2 tem o endereço do primeiro valor a escrever
+	MOV R3, 16										; R3 tem o valor 16 que é o número de bytes entre cada valor a escrever
+	MOV R9, EndPrimeiroLugarTroco					; R9 tem o endereço do primeiro lugar do display a escrever
+
+CicloEscreveTroco:
+
+	MOV R8, [R2]									; R8 tem a quantidade do valor monetário atual
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve a quantidade do valor monetário atual (valor em R8) no display (endereço em R9)
+	ADD R0, 1										; Adiciona 1 ao contador de valores escritos
+	CMP R0, R1										; Compara o contador de valores escritos com a quantidade de valores a escrever
+	JGT FimCicloEscreveTroco						; Se o contador de valores escritos for maior que a quantidade de valores a escrever, salta para a etiqueta FimCicloEscreveTroco
+	ADD R2, R3										; Adiciona 16 ao endereço do valor monetário atual de modo a passar para o próximo valor monetário
+	ADD R9, R3										; Adiciona 16 ao endereço do display de modo a passar para o próximo lugar do display
+	JMP CicloEscreveTroco							; Repete o ciclo
+
+FimCicloEscreveTroco:
+
+	POP R9
+	POP R8
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                       Rotina Verifica PEPE
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Verifica se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+VerificaPEPE:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+
+	MOV R0, BaseDeDadosPEPE							; R0 tem o endereço da base de dados dos PEPEs
+	MOV R1, 16										; R1 tem o valor 16 para passar de endereço em endereço
+	MOV R3, NPEPEVerificar							; R3 tem o endereço do PEPE introduzido pelo utilizador
+
+	SUB R0, R1										; Subtrai 16 ao endereço da base de dados dos PEPEs para fins de ciclo de modo que ao adicionar começar no primeiro lugar da base de dados dos PEPEs
+
+	MOV R5, 0										; R5 tem o valor 0 para fins de contagem de linhas para verificar se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs
+
+	MOV R6, 10 										; R6 tem o valor 10 para fins de comparação com o número de linhas para verificar se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs
+
+CicloVerificaPEPE:
+
+	CMP R5, R6										; Compara o número de linhas para verificar se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs com 10
+	JEQ NaoEncontrado								; Se o número de linhas para verificar se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs for igual a 10, salta para a etiqueta NaoEncontrado
+	ADD R5, 1										; Adiciona 1 ao número de linhas verificadas
+
+	ADD R0, R1										; Adiciona 16 ao endereço da base de dados dos PEPEs para passar para o próximo lugar da base de dados
+	MOV R2, [R0]									; R2 tem o número do PEPE atual
+	MOV R4, [R3]									; R4 tem o número do PEPE introduzido pelo utilizador
+	CMP R2, R4										; Compara o número do PEPE atual com o número do PEPE introduzido pelo utilizador
+	JNE CicloVerificaPEPE							; Se o número do PEPE atual for diferente do número do PEPE introduzido pelo utilizador, repete o ciclo
+
+	JMP Encontrado									; Se o número do PEPE atual for igual ao número do PEPE introduzido pelo utilizador, salta para a etiqueta Encontrado
+
+NaoEncontrado:
+
+	MOV R6, 0										; R6 tem o valor 0, que quer dizer que o PEPE introduzido pelo utilizador não existe
+	JMP FimCicloVerificaPEPE						; Salta para a etiqueta FimCicloVerificaPEPE
+
+Encontrado:
+
+	MOV R6, 1										; R6 tem o valor 1, que quer dizer que o PEPE introduzido pelo utilizador existe
+	JMP FimCicloVerificaPEPE						; Salta para a etiqueta FimCicloVerificaPEPE
+
+FimCicloVerificaPEPE:
+
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                   Rotina Verifica Palavra-Passe
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; Escreve no display uma certa quantidade de valores, linha a linha na mesma coluna
+; Verifica se a palavra-passe introduzida pelo utilizador está correta
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
 VerificaPalavraPasseStock:
@@ -1115,6 +1437,51 @@ FimCicloVerificaPalavraPasseStock:
 	RET
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                       Rotina Escrever Stock
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Escreve as quantidades de cada valor monetário do stock da maquina no display
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; R6 -> Quantidade de valores a escrever
+; R7 -> Endereço do primeiro valor a escrever
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+EscreverStock:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R8
+	PUSH R9
+
+	MOV R0, 1										; R0 é o contador de valores escritos e começa a 1
+	MOV R1, R6										; R1 tem a quantidade de valores a escrever
+	MOV R2, R7										; R2 tem o endereço do primeiro valor a escrever
+	MOV R3, 16										; R3 tem o valor 16 que é o número de bytes entre cada valor a escrever
+	MOV R9, EndPrimeiroLugarStock					; R9 tem o endereço do primeiro lugar do display a escrever
+
+CicloEscreveStock:
+
+	MOV R8, [R2]									; R8 tem a quantidade do valor monetário atual
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve a quantidade do valor monetário atual (valor em R8) no display (endereço em R9)
+	ADD R0, 1										; Adiciona 1 ao contador de valores escritos
+	CMP R0, R1										; Compara o contador de valores escritos com a quantidade de valores a escrever
+	JGT FimCicloEscreveStock						; Se o contador de valores escritos for maior que a quantidade de valores a escrever, salta para a etiqueta FimCicloEscreveStock
+	ADD R2, R3										; Adiciona 16 ao endereço do valor monetário atual de modo a passar para o próximo valor monetário
+	ADD R9, R3										; Adiciona 16 ao endereço do display de modo a passar para o próximo lugar do display
+	JMP CicloEscreveStock							; Repete o ciclo
+
+FimCicloEscreveStock:
+
+	POP R9
+	POP R8
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                           Etiqueta Comprar
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;
@@ -1128,7 +1495,7 @@ RotinaComprar:
 
 LeOpcaoComprar:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
     MOVB R1, [R0]                                         
     CMP R1, 0
 	JEQ LeOpcaoComprar                                     
@@ -1174,7 +1541,7 @@ EscolhaBilhetes:
 
 LeOpcaoEscolhaBilhetes:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
 	MOVB R1, [R0]                                         
 	CMP R1, 0
 	JEQ LeOpcaoEscolhaBilhetes                                     
@@ -1201,7 +1568,7 @@ MostraPrecoTotal:
 
 LeOpcaoMostraPrecoTotal:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
 	MOVB R1, [R0]                                         
 	CMP R1, 0
 	JEQ LeOpcaoMostraPrecoTotal                                     
@@ -1223,7 +1590,7 @@ InserirDinheiro1:
 
 LeOpcaoInserirDinheiro1:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
 	MOVB R1, [R0]                                         
 	CMP R1, 0
 	JEQ LeOpcaoInserirDinheiro1                                     
@@ -1257,7 +1624,7 @@ InserirDinheiro2:
 
 LeOpcaoInserirDinheiro2:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
 	MOVB R1, [R0]                                         
 	CMP R1, 0
 	JEQ LeOpcaoInserirDinheiro2                                     
@@ -1291,7 +1658,7 @@ InserirDinheiro3:
 
 LeOpcaoInserirDinheiro3:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
 	MOVB R1, [R0]                                         
 	CMP R1, 0
 	JEQ LeOpcaoInserirDinheiro3                                     
@@ -1319,6 +1686,8 @@ InseriuDinheiro:
 	CALL MostraDisplay								; Mostra o display da inserção de dinheiro
 	CALL LimpaPerifericos							; Limpa os periféricos
 
+	CALL AdicionaStock								; Chama a rotina AdicionaStock, que adiciona o valor do dinheiro inserido ao stock da máquina
+
 	MOV R10, 0										; R10 tem o valor 0 para sinalizar que o preço em falta não foi pago
 
 	CALL AtualizarPrecoEmFalta						; Chama a rotina AtualizarPrecoEmFalta, que atualiza o preço em falta da compra e o valor total inserido pelo utilizador
@@ -1328,7 +1697,7 @@ InseriuDinheiro:
 
 LeOpcaoInseriuDinheiro:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
 	MOVB R1, [R0]                                         
 	CMP R1, 0
 	JEQ LeOpcaoInseriuDinheiro                                     
@@ -1362,19 +1731,15 @@ Pago:
 
 	CALL EscreverTalao								; Chama a rotina EscreverTalao, que escreve os valores do número do PEPE criado, preco total, valor total inserido e troco no talão
 
-	MOV R5, PrecoTotalCompra						; R5 tem o endereço do preço total da compra
-	MOV R10, [R5]									; R11 tem o valor do preço total da compra
-	CALL CarregarPEPE								; Chama a rotina CarregarPEPE, que carrega o valor do preço total da compra no PEPE criado
-
 LeOpcaoPago:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
 	MOVB R1, [R0]                                         
 	CMP R1, 0
 	JEQ LeOpcaoPago                                     
 	
 	CMP R1, OpcaoContinuarTalao
-	JEQ VoltarInicioCompra2
+	JEQ PrimeiraCompra
 	
 	CALL RotinaErro
 	JMP Pago
@@ -1383,6 +1748,127 @@ VoltarInicioCompra2:
 	JMP Ligado
 
 ;SemEspaco:
+
+PrimeiraCompra:
+
+	MOV R2, Display_PrimeiraCompra					; R2 tem o endereço do display da primeira compra
+	CALL MostraDisplay								; Mostra o display da primeira compra
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+	MOV R5, PrecoTotalCompra						; R5 tem o endereço do preço total da compra
+	MOV R10, [R5]									; R11 tem o valor do preço total da compra
+	CALL CarregarPEPE								; Chama a rotina CarregarPEPE, que carrega o valor do preço total da compra no PEPE criado
+
+LeOpcaoPrimeiraCompra:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoPrimeiraCompra                                     
+	
+	CMP R1, OpcaoContinuarPrimeiraCompra
+	JEQ Troco
+	
+	CALL RotinaErro
+	JMP PrimeiraCompra
+
+Troco:
+
+	MOV R5, TrocoCompra								; R5 tem o endereço do troco da compra
+	MOV R6, [R5]									; R6 tem o valor do troco da compra
+
+	CMP R6, 0										; Compara o valor do troco da compra com 0
+	JGT DevolverTroco								; Se o valor do troco da compra for maior que 0, salta para a etiqueta DevolverTroco
+	JMP Ligado										; Se o valor do troco da compra for igual a 0, volta ao menu principal
+
+DevolverTroco:
+
+	CALL DevolveTroco 								; Chama a rotina DevolveTroco, que retira da máquina os valores monetários correspondentes ao troco da compra
+
+	MOV R10, 0										; R10 tem o valor 0 para fins de verificação de devolução de troco
+
+	CALL RetiraStock								; Chama a rotina RetiraStock, que retira da máquina os valores monetários correspondentes ao troco da compra
+
+	CMP R10, 1										; Compara o valor de R10 com 1, que quer dizer que não há como devolver o troco
+	;JEQ SemTroco									; Se o valor de R10 for 1, salta para a etiqueta SemTroco
+
+DevolverTroco1:
+
+	MOV R2, Display_TrocoDevolvido1					; R2 tem o endereço do display da devolução do troco
+	CALL MostraDisplay								; Mostra o display da devolução do troco
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+	MOV R6, 3 										; R6 tem o valor 3, que é a quantidade de valores a escrever
+	MOV R7, TrocoMoedas10							; R7 tem o endereço do primeiro valor a escrever
+	CALL EscreverTroco								; Chama a rotina EscreverTroco, que escreve os valores monetários devolvidos no display
+
+LeOpcaoDevolverTroco1:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoDevolverTroco1                                     
+	
+	CMP R1, OpcaoSeguinteTrocoDevolvido
+	JEQ DevolverTroco2
+
+	CMP R1, OpcaoSairTrocoDevolvido
+	JEQ VoltarInicioCompra2
+	
+	CALL RotinaErro
+	JMP DevolverTroco1
+
+DevolverTroco2:
+
+	MOV R2, Display_TrocoDevolvido2					; R2 tem o endereço do display da devolução do troco
+	CALL MostraDisplay								; Mostra o display da devolução do troco
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+	MOV R6, 3 										; R6 tem o valor 3, que é a quantidade de valores a escrever
+	MOV R7, TrocoMoedas1							; R7 tem o endereço do primeiro valor a escrever
+	CALL EscreverTroco								; Chama a rotina EscreverTroco, que escreve os valores monetários devolvidos no display
+
+LeOpcaoDevolverTroco2:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoDevolverTroco2                                     
+	
+	CMP R1, OpcaoSeguinteTrocoDevolvido
+	JEQ DevolverTroco3
+
+	CMP R1, OpcaoSairTrocoDevolvido
+	JEQ VoltarInicioCompra2
+	
+	CALL RotinaErro
+	JMP DevolverTroco2
+
+DevolverTroco3:
+
+	MOV R2, Display_TrocoDevolvido3					; R2 tem o endereço do display da devolução do troco
+	CALL MostraDisplay								; Mostra o display da devolução do troco
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+	MOV R6, 2 										; R6 tem o valor 2, que é a quantidade de valores a escrever
+	MOV R7, TrocoNotas10							; R7 tem o endereço do primeiro valor a escrever
+	CALL EscreverTroco								; Chama a rotina EscreverTroco, que escreve os valores monetários devolvidos no display
+
+LeOpcaoDevolverTroco3:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoDevolverTroco3                                     
+	
+	CMP R1, OpcaoSeguinteTrocoDevolvido
+	JEQ DevolverTroco1
+
+	CMP R1, OpcaoSairTrocoDevolvido
+	JEQ VoltarInicioCompra2
+	
+	CALL RotinaErro
+	JMP DevolverTroco3
 	
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                         Etiqueta Usar Cartão
@@ -1398,7 +1884,7 @@ RotinaUsarCartao:
 
 LeOpcaoUsarCartao:
 
-	MOV R0, Opcao                                           
+	MOV R0, PER_EN                                           
     MOVB R1, [R0]                                         
     CMP R1, 0
 	JEQ LeOpcaoUsarCartao                                   
@@ -1430,7 +1916,7 @@ VerificacaoStock:
 
 LePalavraPasseStock:
 
-	MOV R0, Opcao         							; R0 tem o endereço do botão opção                                  
+	MOV R0, PER_EN         							; R0 tem o endereço do botão opção                                  
 	MOVB R1, [R0]									; Leitura do periferico Opção                                         
 	CMP R1, 0										; Compara o valor do botão opção com 0
 	JEQ LePalavraPasseStock							; Se o valor do botão for 0, refaz a leitura                                 
@@ -1459,7 +1945,7 @@ PalavraPasseIntroduzidaErrada:
 
 LeOpcaoPalavraPasseIntroduzidaErrada:
 
-	MOV R0, Opcao         							; R0 tem o endereço do botão opção                                  
+	MOV R0, PER_EN         							; R0 tem o endereço do botão opção                                  
 	MOVB R1, [R0]									; Leitura do periferico Opção                                         
 	CMP R1, 0										; Compara o valor do botão opção com 0
 	JEQ LeOpcaoPalavraPasseIntroduzidaErrada					; Se o valor do botão for 0, refaz a leitura                                 
@@ -1482,7 +1968,7 @@ ConsultarStock:
 
 LeOpcaoConsultarStock:
 
-	MOV R0, Opcao         							; R0 tem o endereço do botão opção                                  
+	MOV R0, PER_EN         							; R0 tem o endereço do botão opção                                  
 	MOVB R1, [R0]									; Leitura do periferico Opção                                         
 	CMP R1, 0										; Compara o valor do botão opção com 0
 	JEQ LeOpcaoConsultarStock						; Se o valor do botão for 0, refaz a leitura                                 
@@ -1507,7 +1993,7 @@ ConsultarStock2:
 
 LeOpcaoConsultarStock2:
 
-	MOV R0, Opcao									; R0 tem o endereço do botão opção                                           
+	MOV R0, PER_EN									; R0 tem o endereço do botão opção                                           
 	MOVB R1, [R0]									; Leitura do periferico Opção                                         
 	CMP R1, 0										; Compara o valor do botão opção com 0
 	JEQ LeOpcaoConsultarStock2						; Se o valor do botão for 0, refaz a leitura                                  
