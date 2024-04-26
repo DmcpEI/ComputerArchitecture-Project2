@@ -2,7 +2,9 @@
 
 PER_EN EQU 1A0H                                  	; Endereço do periférico de entrada
 
-NPEPEVerificar EQU 1B0H								; Número do PEPE a verificar
+NPEPE EQU 1B0H										; Número do PEPE a verificar
+
+PalavraPasseVerificar EQU 235H 						; Palavra-passe escrita pelo utilizador para verificação
 
 ; Periféricos de Saída-------------------------------------------------------------------------------------------------------------------
 
@@ -202,8 +204,6 @@ Place 100H
 PalavraPasseStock:									;Palavra-passe para aceder ao stock (73 74 6F 63 6B)
 	String "stock"
 
-PalavraPasseVerificar EQU 235H 						; Palavra-passe escrita pelo utilizador para verificação
-
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;                                                               Menus
 ;-----------------------------------------------------------------------------------------------------------------------------------------
@@ -251,7 +251,7 @@ Display_CodigoPEPE:									; Menu para inserir o código do PEPE
     String "  INTRODUZA N.  "
     String "      PEPE      "
     String "                "
-    String "        XX      "
+    String "       XX       "
     String "                "
     String " 1 - Continuar  "
     String " 5 - Cancelar   "
@@ -261,7 +261,7 @@ PLACE 2400H
 Display_NPEPEErrado:								; Mensagem de erro para Nº PEPE inexistente
 	String "----- ERRO -----"
 	String "                "
-	String "     Nº PEPE    "
+	String "      PEPE      "
 	String "   inexistente  "
 	String "                "
 	String " 7 - Voltar     "
@@ -628,7 +628,7 @@ LimpaPerifericos:
 	PUSH R1
 
     MOV R0, PER_EN									; R0 tem o endereço do botão PER_ENT
-	MOV R1, NPEPEVerificar							; R1 tem o número do PEPE a verificar
+	MOV R1, NPEPE									; R1 tem o número do PEPE a verificar
 
     MOV R9, 0										; R9 tem o valor 0
 
@@ -702,7 +702,7 @@ Voltar: 											; Etiqueta para voltar
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                       Rotina Verifica Dinheiro
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; Verfica a quantidade de cada tipo monetário no stock de modo a ter algum suficiente no inicio da maquina
+; Verifica a quantidade de cada tipo monetário no stock de modo a ter algum suficiente no inicio da maquina
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
 VerificaDinheiro:
@@ -1537,7 +1537,7 @@ VerificaPEPE:
 
 	MOV R0, BaseDeDadosPEPE							; R0 tem o endereço da base de dados dos PEPEs
 	MOV R1, 16										; R1 tem o valor 16 para passar de endereço em endereço
-	MOV R3, NPEPEVerificar							; R3 tem o endereço do PEPE introduzido pelo utilizador
+	MOV R3, NPEPE									; R3 tem o endereço do PEPE introduzido pelo utilizador
 	MOVB R4, [R3]									; R4 tem o número do PEPE introduzido pelo utilizador
 
 	CMP R4, 0										; Compara o número do PEPE introduzido pelo utilizador com 0
@@ -2366,7 +2366,7 @@ VerificarNPEPE:
 	MOV R7, 0										; R7 tem o valor 0 para fins de verificação do número do PEPE introduzido pelo utilizador
 	CALL VerificaPEPE								; Chama a rotina VerificaPEPE, que verifica se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs
 	CMP R7, 1										; Compara o valor de R7 com 1, que quer dizer que o PEPE introduzido pelo utilizador existe
-	JEQ ConsultarCartao								; Se o valor de R6 for 1, salta para a etiqueta ConsultarCartao
+	JEQ ConsultarCartao								; Se o valor de R7 for 1, salta para a etiqueta ConsultarCartao
 
 ;PEPE Não Encontrado----------------------------------------------------------------------------------------------------------------------
 NPEPEIntroduzidoErrado:
@@ -2377,16 +2377,16 @@ NPEPEIntroduzidoErrado:
 
 LeOpcaoNPEPEIntroduzidoErrado:
 
-	MOV R0, PER_EN                                           
-	MOVB R1, [R0]                                         
-	CMP R1, 0
-	JEQ LeOpcaoNPEPEIntroduzidoErrado                                     
+	MOV R0, PER_EN 									; R0 tem o endereco do periferico de entrada
+	MOVB R1, [R0] 									; R1 tem o valor do periferico de entrada
+	CMP R1, 0 										; Compara o valor do periferico de entrada com 0
+	JEQ LeOpcaoNPEPEIntroduzidoErrado 				; Se o valor do periferico de entrada for 0, repete o ciclo
 	
-	CMP R1, OpcaoVoltarNPEPEErrado
-	JEQ RotinaUsarCartao
+	CMP R1, OpcaoVoltarNPEPEErrado 					; Compara a opção escolhida pelo utilizador com a opção de voltar
+	JEQ RotinaUsarCartao 							; Se a opção escolhida pelo utilizador for a opção de voltar, salta para a etiqueta RotinaUsarCartao
 	
-	CALL RotinaErro
-	JMP NPEPEIntroduzidoErrado
+	CALL RotinaErro 								; Se a opção escolhida pelo utilizador não for a opção de voltar, chama a rotina RotinaErro
+	JMP NPEPEIntroduzidoErrado 						; Salta para a etiqueta NPEPEIntroduzidoErrado novamente
 
 ;Consultar/Gerir Cartão PEPE--------------------------------------------------------------------------------------------------------------
 ConsultarCartao:
@@ -2766,6 +2766,7 @@ ConsultarVerificarStock:
 	CMP R6, 1										; Compara o valor de R6 com 1, que quer dizer que a palavra-passe está correta
 	JEQ ConsultarStock								; Se o valor de R6 for 1, salta para a etiqueta ConsultarStock
 
+;Palavra-Passe Incorreta------------------------------------------------------------------------------------------------------------------
 PalavraPasseIntroduzidaErrada:
 
 	MOV R2, Display_PalavraPasseErrada				; R2 tem o endereço do display de palavra-passe errada
