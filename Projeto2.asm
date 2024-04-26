@@ -1,129 +1,155 @@
 ; Periférico de Entrada-----------------------------------------------------------------------------------------------------------------
 
-PER_EN EQU 1A0H                                             ; Botão ON/OFF
+PER_EN EQU 1A0H                                  	; Endereço do periférico de entrada
+
+NPEPEVerificar EQU 1B0H								; Número do PEPE a verificar
 
 ; Periféricos de Saída-------------------------------------------------------------------------------------------------------------------
 
-Display_beginning EQU 200H                                  ; Endereço de início do display de 7 segmentos
+Display_beginning EQU 200H							; Endereço de início do display de 7 segmentos
 
-Display_end EQU 26FH                                        ; Endereço de fim do display de 7 segmentos
+Display_end EQU 26FH                     			; Endereço de fim do display de 7 segmentos
+
+;Opcoes------------------------------------------------------------------------------------------------------------------------------------
+
+; Menu Inicial
+OpcaoComprar EQU 1									; Opção para comprar
+OpcaoUsarCartao EQU 2								; Opção para usar cartão
+OpcaoStock EQU 3									; Opção para ver o stock
+
+; Menu Comprar
+OpcaoEst1 EQU 1										; Opção para comprar bilhete da estação 1
+OpcaoEst2 EQU 2										; Opção para comprar bilhete da estação 2
+OpcaoEst3 EQU 3										; Opção para comprar bilhete da estação 3
+OpcaoEst4 EQU 4										; Opção para comprar bilhete da estação 4
+OpcaoEst5 EQU 5										; Opção para comprar bilhete da estação 5
+OpcaoCancelarCompra EQU 6							; Opção para cancelar a compra
+
+; Menu Preco Total
+OpcaoContinuarPrecoTotal EQU 1						; Opção para continuar
+OpcaoCancelarPrecoTotal EQU 2						; Opção para cancelar
+
+; Menu Inserir Dinheiro 1
+Opcao10CentimosInserir1 EQU 1						; Opção para inserir 10 cêntimos
+Opcao20CentimosInserir1 EQU 2						; Opção para inserir 20 cêntimos
+Opcao50CentimosInserir1 EQU 3 						; Opção para inserir 50 cêntimos
+OpcaoSeguinteInserir1 EQU 5 						; Opção para avançar
+OpcaoCancelarInserir1 EQU 7 						; Opção para cancelar
+
+; Menu Inserir Dinheiro 2
+Opcao1EuroInserir2 EQU 1 							; Opção para inserir 1 euro
+Opcao2EuroInserir2 EQU 2 							; Opção para inserir 2 euros
+Opcao5EurosInserir2 EQU 3 							; Opção para inserir 5 euros
+OpcaoSeguinteInserir2 EQU 5 						; Opção para avançar
+OpcaoCancelarInserir2 EQU 7 						; Opção para cancelar
+
+; Menu Inserir Dinheiro 3
+Opcao10EuroInserir3 EQU 1 							; Opção para inserir 10 euros
+Opcao20EuroInserir3 EQU 2 							; Opção para inserir 20 euros
+OpcaoSeguinteInserir3 EQU 5 						; Opção para avançar
+OpcaoCancelarInserir3 EQU 7 						; Opção para cancelar
+
+; Menu Inseriu Dinheiro
+OpcaoContinuarInseriuDinheiro EQU 1 				; Opção para continuar
+
+; Menu Talao
+OpcaoContinuarTalao EQU 1 							; Opção para continuar
+
+; Menu Primeira Compra
+OpcaoContinuarPrimeiraCompra EQU 1 					; Opção para continuar
+
+; Menu Troco Devolvido
+OpcaoSeguinteTrocoDevolvido EQU 5 					; Opção para avançar
+OpcaoSairTrocoDevolvido EQU 7 						; Opção para sair
+
+; Menu Usar Cartão
+OpcaoContinuarCartao EQU 1 							; Opção para continuar
+OpcaoCancelarCartao EQU 5 							; Opção para cancelar
+
+; Menu Verificar Stock
+OpcaoConsultarVerificarStock EQU 1 					; Opção para consultar o stock
+OpcaoCancelarVerificarStock  EQU 7 					; Opção para cancelar
+
+; Menu Consultar Stock
+OpcaoSeguinteStock EQU 5 							; Opção para avançar
+OpcaoSairStock EQU 7 								; Opção para sair
+
+; Menu Escolher Bilhete
+OpcaoSimEscolherBilhete EQU 1 						; Opção para escolher bilhete
+OpcaoNaoEscolherBilhete EQU 2 						; Opção para não escolher bilhete
+
+; Menu Erro
+OpcaoVoltarErro EQU 7 								; Opção para voltar
+
+; Menu Erro Espaço Insuficiente
+
+; Menu Sem Troco
+OpcaoContinuarSemTroco EQU 7						; Opção para continuar
+
+; Menu Obrigado Compra
+OpcaoContinuarObrigadoCompra EQU 7					; Opção para continuar
+
+; Menu NPEPE Errado
+OpcaoVoltarNPEPEErrado EQU 7						; Opção para voltar
+
+; Menu PEPE
+OpcaoComprarPEPE EQU 1								; Opção para comprar
+OpcaoRecarregarPEPE EQU 2							; Opção para recarregar
+OpcaoVoltarPEPE EQU 7								; Opção para voltar
+
+; Menu Saldo Insuficiente PEPE
+OpcaoVoltarSaldoInsuficientePEPE EQU 7				; Opção para voltar
+
+; Menu Talao PEPE
+OpcaoContinuarTalaoPEPE EQU 1						; Opção para continuar
+
+; Menu Inseriu Dinheiro PEPE
+OpcaoContinuarInseriuDinheiroPEPE EQU 1				; Opção para continuar
+
 
 ;Constantes--------------------------------------------------------------------------------------------------------------------------------
 
-; Menu Inicial
-OpcaoComprar EQU 1
-OpcaoUsarCartao EQU 2
-OpcaoStock EQU 3
+CaracterVazio EQU 20H                             	; Caracter vazio
 
-; Menu Comprar
-OpcaoEst1 EQU 1
-OpcaoEst2 EQU 2
-OpcaoEst3 EQU 3
-OpcaoEst4 EQU 4
-OpcaoEst5 EQU 5
-OpcaoCancelarCompra EQU 6
-
-; Menu Preco Total
-OpcaoContinuarPrecoTotal EQU 1
-OpcaoCancelarPrecoTotal EQU 2
-
-; Menu Inserir Dinheiro 1
-Opcao10CentimosInserir1 EQU 1
-Opcao20CentimosInserir1 EQU 2
-Opcao50CentimosInserir1 EQU 3
-OpcaoSeguinteInserir1 EQU 5
-OpcaoCancelarInserir1 EQU 7
-
-; Menu Inserir Dinheiro 2
-Opcao1EuroInserir2 EQU 1
-Opcao2EuroInserir2 EQU 2
-Opcao5EurosInserir2 EQU 3
-OpcaoSeguinteInserir2 EQU 5
-OpcaoCancelarInserir2 EQU 7
-
-; Menu Inserir Dinheiro 3
-Opcao10EuroInserir3 EQU 1
-Opcao20EuroInserir3 EQU 2
-OpcaoSeguinteInserir3 EQU 5
-OpcaoCancelarInserir3 EQU 7
-OpcaoConfirmarInserir3 EQU 0
-
-; Menu Inseriu Dinheiro
-OpcaoContinuarInseriuDinheiro EQU 1
-
-; Menu Talao
-OpcaoContinuarTalao EQU 1
-
-; Menu Primeira Compra
-OpcaoContinuarPrimeiraCompra EQU 1
-
-; Menu Troco Devolvido
-OpcaoSeguinteTrocoDevolvido EQU 5
-OpcaoSairTrocoDevolvido EQU 7
-
-; Menu Usar Cartão
-OpcaoContinuarCartao EQU 1
-OpcaoCancelarCartao EQU 5
-
-; Menu Comprar Cartão
-OpcaoComprarCartao EQU 1
-OpcaoRecarregarCartao EQU 2
-
-; Menu Verificar Stock
-
-OpcaoConsultarVerificarStock EQU 1
-OpcaoCancelarVerificarStock  EQU 7
-
-; Menu Stock
-OpcaoConsultarStock EQU 1
-OpcaoInserirStock EQU 2
-OpcaoVoltarStock EQU 5
-
-; Menu Consultar Stock
-OpcaoSeguinteStock EQU 5
-OpcaoAnteriorStock EQU 6
-OpcaoSairStock EQU 7
-
-; Menu Escolher Bilhete
-OpcaoSimEscolherBilhete EQU 1
-OpcaoNaoEscolherBilhete EQU 2
-
-; Menu Erro
-OpcaoVoltarErro EQU 7
-
-
-CaracterVazio EQU 20H                                       ; Caracter vazio
-
-StackPointer EQU 1000H		                                ; Endereço do Stack Pointer
+StackPointer EQU 1000H		                      	; Endereço do Stack Pointer
 
 ;Endereços para escrita de valores--------------------------------------------------------------------------------------------------------
 
 ; Stock
-EndPrimeiroLugarStock EQU 22DH								; Endereço do primeiro lugar do display para escrever o valor no stock (da direita para a esquerda)
+EndPrimeiroLugarStock EQU 22DH						; Endereço do primeiro lugar do display para escrever o valor no display do stock
 
 ; Devolução de Troco
-EndPrimeiroLugarTroco EQU 22DH								; Endereço do primeiro lugar do display para escrever o valor do troco (da direita para a esquerda)
+EndPrimeiroLugarTroco EQU 22DH						; Endereço do primeiro lugar do display para escrever o valor no display de devolução do troco
 
 ; Preço Total
-EndEscreverPrecoTotalCentimos EQU 239H						; Endereço do primeiro lugar do display para escrever os centimos do preço total (da direita para a esquerda)
-EndEscreverPrecoTotalEuros EQU 236H							; Endereço do primeiro lugar do display para escrever os euros preço total (da direita para a esquerda)
+EndEscreverPrecoTotalCentimos EQU 239H				; Endereço do primeiro lugar do display para escrever os centimos do preço total no respetivo display
+EndEscreverPrecoTotalEuros EQU 236H					; Endereço do primeiro lugar do display para escrever os euros preço total no respetivo display
 
 ; Dinheiro Inserido
-EndDinheiroInseridoCentimos EQU 22EH						; Endereço do primeiro lugar do display para escrever os centimos do dinheiro inserido (da direita para a esquerda)
-EndDinheiroInseridoEuros EQU 22BH							; Endereço do primeiro lugar do display para escrever os euros do dinheiro inserido (da direita para a esquerda)
+EndDinheiroInseridoCentimos EQU 22EH				; Endereço do primeiro lugar do display para escrever os centimos do dinheiro inserido no respetivo display
+EndDinheiroInseridoEuros EQU 22BH					; Endereço do primeiro lugar do display para escrever os euros do dinheiro inserido no respetivo display
 
 ; Talão
-EndNumeroPEPETalao EQU 219H									; Endereço do primeiro lugar do display para escrever o número do PEPE (da direita para a esquerda)
-EndPrecosCentimosTalao EQU 22EH								; Endereço do primeiro lugar do display para escrever os centimos do preco total no talão
-EndPrecosEurosTalao EQU 22BH								; Endereço do primeiro lugar do display para escrever os euros do preco total no talão
+EndNumeroPEPETalao EQU 219H							; Endereço do primeiro lugar do display para escrever o número do PEPE no talão
+EndPrecosCentimosTalao EQU 22EH						; Endereço do primeiro lugar do display para escrever os centimos do preco total no talão
+EndPrecosEurosTalao EQU 22BH						; Endereço do primeiro lugar do display para escrever os euros do preco total no talão
+
+; PEPE
+EndNumeroPEPE EQU 209H								; Endereço do primeiro lugar do display para escrever o número do PEPE
+EndSaldoPEPECentimos EQU 22DH						; Endereço do primeiro lugar do display para escrever os centimos do saldo do PEPE
+EndSaldoPEPEEuros EQU 22AH							; Endereço do primeiro lugar do display para escrever os euros do saldo do PEPE
+
+; Recarrregar PEPE
+EndSaldoPEPECentimosRecarregar EQU 23EH				; Endereço do primeiro lugar do display para escrever os centimos do saldo do PEPE a recarregar
+EndSaldoPEPEEurosRecarregar EQU 23BH				; Endereço do primeiro lugar do display para escrever os euros do saldo do PEPE a recarregar
 
 ;Preços dos bilhetes----------------------------------------------------------------------------------------------------------------------
 
-BEstacao1Preco EQU 150
-BEstacao2Preco EQU 250
-BEstacao3Preco EQU 400
-BEstacao4Preco EQU 550
-BEstacao5Preco EQU 700
+BEstacao1Preco EQU 150								; Preço do bilhete da estação 1
+BEstacao2Preco EQU 250								; Preço do bilhete da estação 2
+BEstacao3Preco EQU 400 								; Preço do bilhete da estação 3
+BEstacao4Preco EQU 550 								; Preço do bilhete da estação 4
+BEstacao5Preco EQU 700 								; Preço do bilhete da estação 5
 
 ;Dinheiro--------------------------------------------------------------------------------------------------------------------------------
 
@@ -169,7 +195,8 @@ TrocoCompra EQU 530H										; Troco a ser devolvido ao utilizador (ValorInseri
 BaseDeDadosPEPE EQU 1000H									; Endereço inicial da base de dados dos PEPEs
 FimBaseDeDadosPEPE EQU 1090H								; Endereço final da base de dados dos PEPEs
 NPepes EQU 10A0H											; Número de PEPEs na base de dados (Máximo de 10 PEPEs)
-NPEPEVerificar EQU 238H										; Número do PEPE a verificar (da direita para a esquerda)
+NPEPEAtual EQU 10B0H										; Número do PEPE atual a ser gerido
+SaldoPEPEAtual EQU 10C0H									; Saldo do PEPE atual a ser gerido
 
 ;Passe do Stock--------------------------------------------------------------------------------------------------------------------------
 
@@ -185,7 +212,7 @@ PalavraPasseVerificar EQU 235H 								; Palavra-passe escrita pelo utilizador p
 
 PLACE 2000H
 
-Display_MenuInicial:
+Display_MenuInicial:										; Menu Inicial
 
     String " MAQUINA VENDAS "
     String "     METRO      "
@@ -197,7 +224,7 @@ Display_MenuInicial:
 
 PLACE 2100H
 
-Display_MenuComprar:
+Display_MenuComprar:										; Menu Comprar
 
     String "  MENU ESTACAO  "
     String "1-ESTACAO 1:1.50"
@@ -209,7 +236,7 @@ Display_MenuComprar:
 
 PLACE 2200H
 
-Display_Talao:
+Display_Talao:												; Talão de compra
 
     String "   PEPE GERADO  "
     String "       000      "
@@ -221,64 +248,62 @@ Display_Talao:
     
 PLACE 2300H
 
-Display_CodigoPEPE:
+Display_CodigoPEPE:											; Menu para inserir o código do PEPE
     
     String "  INTRODUZA N.  "
     String "      PEPE      "
     String "                "
-    String "       XX       "
+    String "        XX      "
     String "                "
     String " 1 - Continuar  "
     String " 5 - Cancelar   "
 
 PLACE 2400H
 
-Display_NPEPEErrado:
-	String " ---- ERRO ---- "
+Display_NPEPEErrado:										; Mensagem de erro para Nº PEPE inexistente
+	String "----- ERRO -----"
 	String "                "
 	String "     Nº PEPE    "
-	String "    incorreto   "
+	String "   inexistente  "
 	String "                "
 	String " 7 - Voltar     "
-	String " ---- ERRO ---- "
+	String "----- ERRO -----"
 
 PLACE 2500H
 
-Display_MenuUsarPEPE:
-
-    String "   SALDO PEPE   "
+Display_MenuUsarPEPE: 									 	; Menu gestor do PEPE
+    String "    PEPE        "
     String "                "
-    String "     00.00      "
+    String " Saldo:  00.00  "
     String "                "
     String "1 - Comprar     "
     String "2 - Recarregar  "
-    String "                "
+	String "7 - Voltar      "
 
 PLACE 2600H
 
-Display_ErroEspacoInsuficiente:
-    String "   Pagamento    "
-	String "   Inserido:    "
-	String "     0.00       "
-	String "     Euros      "
-	String "                "
-	String "6 - Cancelar    "
-	String "9 - Confirmar   "
+Display_ErroEspacoInsuficiente:								; Mensagem de erro para espaço insuficiente na base de dados dos PEPEs
+	String "----- ERRO -----"
+	String "  ESPACO PARA   "
+	String "      PEPE      "
+	String "   INSUFICIENTE "
+    String "                "
+	String " 7 - Voltar     "
+	String "----- ERRO -----"
 
 Place 2700H  											  
 
-Display_FaltaMoedasTroco:
-	String "---- Alerta ----"
-	String "     Moedas     "
-	String "    Em stock    "
-	String "  insuficientes "
-	String "   para troco   "
+Display_SaldoInsuficientePEPE: 								; Mensagem de erro para saldo insuficiente no PEPE para a compra
+	String "----- ERRO -----"
 	String "                "
-	String " 1 - Continuar  "
-
+	String "   SALDO PEPE   "
+	String "  INSUFICIENTE  "
+	String "                "
+	String " 7 - Voltar     "
+	String "----- ERRO -----"
 Place 2800H
 
-Display_VerificacaoStock:           
+Display_VerificacaoStock: 									; Menu para entrada no stock da máquina        
 	String "     STOCK      "
 	String "                "
 	String " PALAVRA-PASSE: "
@@ -286,32 +311,10 @@ Display_VerificacaoStock:
 	String "                "
 	String "1 - Consultar   "
 	String "7 - Cancelar    "
-
-Place 2900H
-                                                   
-Display_ConsultarStock1:
-	String "    CONSULTA    "
-	String "     STOCK      "
-	String " 10 Cent...     "
-	String " 20 Cent...     "
-	String " 50 Cent...     "
-    String "5 - Seguinte    "
-	String "7 - Sair        "
-
-Place 2A00H
-
-Display_ConsultarStock2:
-	String "    CONSULTA    "
-	String "     STOCK      "
-	String " 1 Euro....     "
-	String " 2 Euros...     "
-	String " 5 Euros...     "
-	String "6 - Anterior    "
-	String "7 - Sair        "
 	
-Place 2B00H
+Place 2900H
 
-Display_InserirDinheiro1:
+Display_InserirDinheiro1: 									; Menu para inserir dinheiro na máquina
 	String "    INSERCAO    "
 	String "  DE  DINHEIRO  " 
 	String "1 - 10 Cent     "
@@ -320,9 +323,9 @@ Display_InserirDinheiro1:
 	String "5 - Seguinte    "
 	String "7 - Cancelar    "
 
-Place 2C00H
+Place 2A00H
 
-Display_InserirDinheiro2:
+Display_InserirDinheiro2: 									; Menu para inserir dinheiro na máquina
 	String "    INSERCAO    "
 	String "  DE  DINHEIRO  " 
 	String "1 - 1 Euro      "
@@ -331,9 +334,9 @@ Display_InserirDinheiro2:
 	String "5 - Seguinte    "
 	String "7 - Cancelar    "
 
-Place 2D00H
+Place 2B00H
 
-Display_InserirDinheiro3:
+Display_InserirDinheiro3: 									; Menu para inserir dinheiro na máquina
 	String "    INSERCAO    "
 	String "  DE  DINHEIRO  " 
 	String "1 - 10 Euros    "
@@ -342,9 +345,9 @@ Display_InserirDinheiro3:
 	String "5 - Seguinte    "
 	String "7 - Cancelar    "
 
-Place 2E00H
+Place 2C00H
 
-Display_PalavraPasseErrada:
+Display_PalavraPasseErrada: 								; Mensagem de erro para palavra-passe do stock incorreta
 	String " ---- ERRO ---- "
 	String " PALAVRA-PASSE  "
     String "    INSERIDA    "
@@ -353,9 +356,9 @@ Display_PalavraPasseErrada:
 	String " 7 - Voltar     "
 	String " ---- ERRO ---- "
 
-Place 2F00H
+Place 2D00H
 
-Display_EscolheuBilhete:
+Display_EscolheuBilhete: 									; Menu para escolher bilhete
 	String "----------------"
 	String "ESCOLHEU BILHETE"
 	String "                "
@@ -364,9 +367,9 @@ Display_EscolheuBilhete:
 	String "1 - Sim  2 - Nao"
 	String "----------------"
 
-Place 3000H
+Place 2E00H
 
-Display_PrecoTotal:
+Display_PrecoTotal: 										; Menu para mostrar o preço total da compra
 	String "----------------"
 	String "  PRECO TOTAL   "
 	String "----------------"
@@ -375,9 +378,9 @@ Display_PrecoTotal:
 	String "2 - Cancelar    "
 	String "----------------"
 
-Place 3100H
+Place 2F00H
 
-Display_Erro:
+Display_Erro:												; Mensagem de erro para opção não disponível
 	String " ---- ERRO ---- "
 	String "                "
 	String "    OPCAO NAO   "
@@ -386,9 +389,9 @@ Display_Erro:
 	String " 7 - Voltar     "
 	String " ---- ERRO ---- "
 
-Place 3200H
+Place 3000H
 
-Display_InseriuDinheiro:
+Display_InseriuDinheiro: 									; Menu para mostrar o dinheiro inserido
 	String "----------------"
 	String "                "
 	String " INSERIU:   .00 "
@@ -397,9 +400,9 @@ Display_InseriuDinheiro:
 	String "1 - Continuar   "
 	String "----------------"
 
-Place 3300H
+Place 3100H
 
-Display_PrimeiraCompra:
+Display_PrimeiraCompra: 									; Menu para primeira compra
 	String "    PARABENS    "
 	String "VIAGEM GRATUITA!"
 	String "                "
@@ -408,9 +411,9 @@ Display_PrimeiraCompra:
 	String "   NO CARTAO    "
 	String "1 - Continuar   "
 
-Place 3400H
+Place 3200H
 
-Display_TrocoDevolvido1:      
+Display_TrocoDevolvido1: 									; Menu para mostrar troco devolvido  
 	String "  RETIRE O SEU  "
 	String "     TROCO!     "
 	String " 10 Cent...     "
@@ -419,9 +422,9 @@ Display_TrocoDevolvido1:
     String "5 - Seguinte    "
 	String "7 - Sair        "
 
-Place 3500H
+Place 3300H
 
-Display_TrocoDevolvido2:      
+Display_TrocoDevolvido2: 									; Menu para mostrar troco devolvido      
 	String "  RETIRE O SEU  "
 	String "     TROCO!     "
 	String " 1 Euro....     "
@@ -430,9 +433,9 @@ Display_TrocoDevolvido2:
 	String "5 - Seguinte    "
 	String "7 - Sair        "
 
-Place 3600H
+Place 3400H
 
-Display_TrocoDevolvido3:      
+Display_TrocoDevolvido3: 									; Menu para mostrar troco devolvido      
 	String "  RETIRE O SEU  "
 	String "     TROCO!     "
 	String " 10 Euros..     "
@@ -440,6 +443,82 @@ Display_TrocoDevolvido3:
 	String "                "
 	String "5 - Seguinte    "
 	String "7 - Sair        "  
+
+Place 3500H
+
+Display_SemTroco: 											; Mensagem de erro para falta de troco
+	String " ---- ERRO ---- "
+	String "  NAO HA TROCO  "
+	String "   DISPONIVEL   "
+	String "                "
+	String " 7 - Continuar  "
+	String "    Sem troco   "
+	String " ---- ERRO ---- "
+
+Place 3600H
+
+Display_ObrigadoCompra: 									; Menu para agradecer a compra
+	String "                "
+	String "    OBRIGADO    "
+	String "    PELA SUA    "
+	String "    COMPRA!     "
+	String "                "
+	String " 7 - Continuar  "
+
+Place 3700H
+
+Display_TalaoPEPE: 											; Menu para mostrar o talão do PEPE
+	String "COMPRA EFETUADA "
+	String "   COM PEPE     "
+	String "Total:     0.00 "
+	String "Saldo:     0.00 "
+	String "                "
+	String " 1 - Continuar  "
+	String "                "
+
+Place 3800H
+
+Display_InseriuDinheiroPEPE: 								; Menu para mostrar o dinheiro inserido no PEPE
+	String "----------------"
+	String "                "
+	String "                "
+	String " INSERIU:   .00 "
+	String "                "
+	String "1 - Continuar   "
+	String "----------------"
+
+Place 3900H
+                                                   
+Display_ConsultarStock1: 									; Menu para consultar o stock
+	String "    CONSULTA    "
+	String "     STOCK      "
+	String " 10 Cent...     "
+	String " 20 Cent...     "
+	String " 50 Cent...     "
+    String "5 - Seguinte    "
+	String "7 - Sair        "
+
+Place 3A00H
+
+Display_ConsultarStock2: 									; Menu para consultar o stock
+	String "    CONSULTA    "
+	String "     STOCK      "
+	String " 1 Euro....     "
+	String " 2 Euros...     "
+	String " 5 Euros...     "
+    String "5 - Seguinte    "
+	String "7 - Sair        "
+
+Place 3B00H
+
+Display_ConsultarStock3: 									; Menu para consultar o stock
+	String "    CONSULTA    "
+	String "     STOCK      "
+	String " 10 Euros..     "
+	String " 20 Euros..     "
+	String "                "
+    String "5 - Seguinte    "
+	String "7 - Sair        "
    
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;                                                      Código de Inicialização
@@ -449,8 +528,8 @@ Place 0000H
 
 Inicio:
 
-	MOV R0, Principio                                       ; Coloca em R0 o endereço da etiqueta Principio
-	JMP R0                                                  ; Salta para a etiqueta Principio
+	MOV R0, Principio                              	; Coloca em R0 o endereço da etiqueta Principio
+	JMP R0                                       	; Salta para a etiqueta Principio
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                       Rotina Principal
@@ -462,58 +541,51 @@ Place 6000H
 
 Principio:
 
-    MOV SP, StackPointer
-    CALL LimpaDisplay
-    CALL LimpaPerifericos
+    MOV SP, StackPointer							; Inicializa o Stack Pointer
+    CALL LimpaDisplay								; Limpa o display
+    CALL LimpaPerifericos 						 	; Limpa os periféricos
 
-LeOnOff:
+LePER:
 
-    MOV R0, PER_EN
-    MOVB R1, [R0]
-    CMP R1, 1
-    JNE LeOnOff
-	CALL VerificaDinheiro
+    MOV R0, PER_EN 									; R0 tem o endereço do botão PER_EN
+    MOVB R1, [R0] 									; Leitura do periférico PER_EN
+    CMP R1, 1 										; Compara o valor do botão PER_EN com 1
+    JNE LePER 										; Se o valor do botão PER_EN for diferente de 1, repete a leitura
+	CALL VerificaDinheiro 							; Verifica a quantidade de cada tipo monetário no stock de modo a ter algum suficiente no inicio da maquina
 
 Ligado:
 
-    MOV R2, Display_MenuInicial
-    CALL MostraDisplay
-    CALL LimpaPerifericos
+    MOV R2, Display_MenuInicial						; R2 tem o endereço do menu inicial
+    CALL MostraDisplay 								; Mostra o menu inicial no display
+    CALL LimpaPerifericos 							; Limpa os periféricos
 
 LeOpcao:
 
-	MOV R0, PER_EN                                           ; R0 tem o endereço do botão opção
-    MOVB R1, [R0]                                           ; Leitura do periferico Opção
-    CMP R1, 0
-	JEQ LeOpcao                                             ; Se o valor do botão for 0, refaz a leitura
+	MOV R0, PER_EN                               	; R0 tem o endereço do botão PER_EN
+    MOVB R1, [R0]                                   ; Leitura do periférico PER_EN
+    CMP R1, 0										; Compara o valor do botão PER_EN com 0
+	JEQ LeOpcao                                     ; Se o valor do botão for 0, refaz a leitura
 	
-	CMP R1, OpcaoComprar
-	JEQ RotinaComprarIntermedio
+	CMP R1, OpcaoComprar							; Compara o valor do botão PER_EN com a opção de comprar
+	JEQ RotinaComprarIntermedio 					; Se o valor do botão for igual à opção de comprar, salta para a etiqueta RotinaComprarIntermedio
 
-	CMP R1, OpcaoUsarCartao
-	JEQ RotinaUsarCartaoIntermedio
+	CMP R1, OpcaoUsarCartao 						; Compara o valor do botão PER_EN com a opção de usar cartão
+	JEQ RotinaUsarCartaoIntermedio 					; Se o valor do botão for igual à opção de usar cartão, salta para a etiqueta RotinaUsarCartaoIntermedio
 
-    CMP R1, OpcaoStock
-	JEQ RotinaStockIntermedio
+    CMP R1, OpcaoStock 								; Compara o valor do botão PER_EN com a opção de ver o stock
+	JEQ RotinaStockIntermedio 						; Se o valor do botão for igual à opção de ver o stock, salta para a etiqueta RotinaStockIntermedio
 	
-	CALL RotinaErro
-	JMP Ligado
+	CALL RotinaErro 								; Se o valor do botão for diferente das opções disponíveis, salta para a etiqueta RotinaErro
+	JMP Ligado 										; Salta para a etiqueta Ligado
 
-;-----------------------------------------------------------------------------------------------------------------------------------------
-;									                               Jumps
-;-----------------------------------------------------------------------------------------------------------------------------------------
+RotinaComprarIntermedio:							; Etiqueta intermédia para a rotina de comprar que usa um JMP de modo a alcançar a etiqueta RotinaComprar
+    JMP ReiniciaVariaveisCompra						; Salta para a etiqueta ReiniciaVariaveisCompra
 
-LigadoIntermedio:
-    JMP Ligado
+RotinaUsarCartaoIntermedio: 						; Etiqueta intermédia para a rotina de usar cartão que usa um JMP de modo a alcançar a etiqueta RotinaUsarCartao
+    JMP RotinaUsarCartao 							; Salta para a etiqueta RotinaUsarCartao
 
-RotinaComprarIntermedio:
-    JMP RotinaComprar
-
-RotinaUsarCartaoIntermedio:
-    JMP RotinaUsarCartao
-
-RotinaStockIntermedio:
-    JMP VerificacaoStock
+RotinaStockIntermedio: 								; Etiqueta intermédia para a rotina de ver o stock que usa um JMP de modo a alcançar a etiqueta RotinaStock
+    JMP VerificacaoStock 							; Salta para a etiqueta VerificacaoStock
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                       Rotina Limpa Display
@@ -523,6 +595,7 @@ RotinaStockIntermedio:
 
 LimpaDisplay:
 
+	; Guardar os registos
 	PUSH R0 
 	PUSH R1 
 	PUSH R2 
@@ -538,6 +611,7 @@ CicloLimpa:
 	CMP R0, R1										; Compara o endereço do display com o endereço de fim do display
 	JLE CicloLimpa									; Se o endereço do display for menor ou igual ao endereço de fim do display, repete o ciclo
 	
+	; Restaurar os registos
 	POP R2
 	POP R1
 	POP R0
@@ -551,14 +625,20 @@ CicloLimpa:
 
 LimpaPerifericos:
 
+	; Guardar os registos
     PUSH R0
+	PUSH R1
 
     MOV R0, PER_EN									; R0 tem o endereço do botão PER_ENT
+	MOV R1, NPEPEVerificar							; R1 tem o número do PEPE a verificar
 
     MOV R9, 0										; R9 tem o valor 0
 
-    MOVB [R0], R9									; Coloca o valor 0 no botão ON/OFF
+    MOVB [R0], R9									; Coloca o valor 0 no botão PER_EN
+	MOVB [R1], R9									; Coloca o valor 0 no número do PEPE a verificar
 
+	; Restaurar os registos
+	POP R1
     POP R0
     RET
 
@@ -570,6 +650,7 @@ LimpaPerifericos:
 
 MostraDisplay:
 
+	; Guardar os registos
     PUSH R0
     PUSH R1
     PUSH R3
@@ -586,10 +667,39 @@ CicloDisplay:
     CMP R0, R1										; Compara o endereço do display com o endereço de fim do display
     JLE CicloDisplay								; Se o endereço do display for menor ou igual ao endereço de fim do display, repete o ciclo
 
+	; Restaurar os registos
     POP R3
     POP R1
     POP R0
     RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                            Rotina Erro
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Mostra a mensagem de erro no display se opção não existir
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+RotinaErro:
+
+	MOV R2, Display_Erro							; R2 tem o endereço da mensagem de erro
+	CALL MostraDisplay 								; Mostra a mensagem de erro no display
+	CALL LimpaPerifericos 							; Limpa os periféricos
+
+LeOpcaoErro:
+
+	MOV R0, PER_EN 									; R0 tem o endereço do botão PER_EN 
+	MOVB R1, [R0] 									; Leitura do periférico PER_EN
+	CMP R1, 0 										; Compara o valor do botão PER_EN com 0
+	JEQ LeOpcaoErro 								; Se o valor do botão for 0, refaz a leitura
+
+	CMP R1, OpcaoVoltarErro 						; Compara o valor do botão PER_EN com a opção de voltar
+	JEQ Voltar 										; Se o valor do botão for igual à opção de voltar, salta para a etiqueta Voltar
+
+	CALL RotinaErro 								; Se o valor do botão for diferente da opção de voltar, salta para a etiqueta RotinaErro
+	JMP Ligado 										; Salta para a etiqueta Ligado
+
+Voltar: 											; Etiqueta para voltar
+	RET
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                       Rotina Verifica Dinheiro
@@ -599,6 +709,7 @@ CicloDisplay:
 
 VerificaDinheiro:
 
+	; Guardar os registos
     PUSH R0
     PUSH R1
     PUSH R2
@@ -609,7 +720,7 @@ VerificaDinheiro:
 
     MOV R0, StockMoedas10							; R0 tem o endereço do stock de moedas de 10 centimos (Que são as primeiras na memória)
     MOV R1, StockNotas20 							; R1 tem o endereço do stock de notas de 20 euros (Que são as ultimas na memória)
-	MOV R5, 16										; R5 tem o valor de 10 para passar de endereço em endereço
+	MOV R5, 16										; R5 tem o valor de 16 para passar de endereço em endereço
 	MOV R6, 10 										; R6 tem o valor 10 para fins de adição
 
 CicloVerificaDinheiro:
@@ -629,6 +740,7 @@ DinheiroSuficiente:
 	CMP R0, R1										; Compara o endereço do valor monetário atual com o endereço do stock de notas de 20 euros
 	JLE CicloVerificaDinheiro						; Se o endereço do valor monetário atual for menor ou igual ao endereço do stock de notas de 20 euros, repete o ciclo
 
+	; Restaurar os registos
 	POP R6
 	POP R5
 	POP R4
@@ -637,6 +749,67 @@ DinheiroSuficiente:
     POP R1
     POP R0
     RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                 Rotina Reiniciar Variaveis Compra
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Reinicia as variáveis de compra
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+ReiniciarVarCompra:
+
+	; Guardar os registos
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	PUSH R7
+	PUSH R8
+
+	MOV R0, PrecoTotalCompra						; R0 tem o endereço do preço total da compra
+	MOV R1, ValorInseridoCompra						; R1 tem o endereço do valor total inserido pelo utilizador
+	MOV R2, ValorEmFaltaCompra						; R2 tem o endereço do preço em falta da compra
+	MOV R3, TrocoCompra								; R3 tem o endereço do troco a ser devolvido ao utilizador
+
+	MOV R4, 0										; R4 tem o valor 0
+
+	MOV [R0], R4									; Atualiza o preço total da compra para 0
+	MOV [R1], R4									; Atualiza o valor total inserido pelo utilizador para 0
+	MOV [R2], R4									; Atualiza o preço em falta da compra para 0
+	MOV [R3], R4									; Atualiza o troco a ser devolvido ao utilizador para 0
+
+	MOV R0, TrocoMoedas10							; R0 tem o endereço do número de moedas de 10 centimos para troco
+	MOV R1, TrocoMoedas20							; R1 tem o endereço do número de moedas de 20 centimos para troco
+	MOV R2, TrocoMoedas50							; R2 tem o endereço do número de moedas de 50 centimos para troco
+	MOV R3, TrocoMoedas1							; R3 tem o endereço do número de moedas de 1 euro para troco
+	MOV R5, TrocoMoedas2							; R4 tem o endereço do número de moedas de 2 euros para troco
+	MOV R6, TrocoNotas5								; R5 tem o endereço do número de notas de 5 euros para troco
+	MOV R7, TrocoNotas10							; R6 tem o endereço do número de notas de 10 euros para troco
+	MOV R8, TrocoNotas20							; R7 tem o endereço do número de notas de 20 euros para troco
+
+	MOV [R0], R4									; Atualiza o número de moedas de 10 centimos para troco para 0
+	MOV [R1], R4									; Atualiza o número de moedas de 20 centimos para troco para 0
+	MOV [R2], R4									; Atualiza o número de moedas de 50 centimos para troco para 0
+	MOV [R3], R4									; Atualiza o número de moedas de 1 euro para troco para 0
+	MOV [R5], R4									; Atualiza o número de moedas de 2 euros para troco para 0
+	MOV [R6], R4									; Atualiza o número de notas de 5 euros para troco para 0
+	MOV [R7], R4									; Atualiza o número de notas de 10 euros para troco para 0
+	MOV [R8], R4									; Atualiza o número de notas de 20 euros para troco para 0
+
+	; Restaurar os registos
+	POP R8
+	POP R7
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                        Rotina Escrever Display
@@ -649,6 +822,7 @@ DinheiroSuficiente:
 
 EscreveDisplay:
 
+	; Guardar os registos
 	PUSH R0
 	PUSH R1
 	PUSH R2
@@ -672,6 +846,7 @@ CicloEscreveDisplay:
 
 FimCicloEscreveDisplay:
 
+	; Restaurar os registos
 	POP R3
 	POP R2
 	POP R1
@@ -681,13 +856,14 @@ FimCicloEscreveDisplay:
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                       Rotina Escrever Preco
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; 
+; Escreve o preço num certo endereço no display
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ; R7 -> Preço a escrever
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
 EscreverPreco:
 
+	; Guardar os registos
 	PUSH R0
 	PUSH R1
 	PUSH R2
@@ -698,20 +874,21 @@ EscreverPreco:
 	MOV R1, 100										; R1 tem o valor 100 para obter os euros e os cêntimos					
 
 	MOV R0, R7										; R0 tem o preço a escrever					
-	DIV R0, R1										; R0 tem os euros			
+	DIV R0, R1										; R0 tem os euros desse preço		
 
 	MOV R3, R7										; R3 tem o preço a escrever             					
-	MOD R3, R1										; R3 tem os cêntimos					
+	MOD R3, R1										; R3 tem os cêntimos desse preço					
 
 CicloEscrevePreco:
 
-	MOV R9, EndEscreverPrecoTotalEuros				; R9 tem o endereço a escrever
-	MOV R8, R0										; R8 tem os euros
-	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os euros no display	
-	MOV R9, EndEscreverPrecoTotalCentimos			; R9 tem o endereço a escrever
-	MOV R8, R3										; R8 tem os cêntimos
-	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os cêntimos no display							
+	MOV R9, EndEscreverPrecoTotalEuros				; R9 tem o endereço a escrever os euros do preço
+	MOV R8, R0										; R8 tem os euros do preço
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os euros do preço no display	
+	MOV R9, EndEscreverPrecoTotalCentimos			; R9 tem o endereço a escrever os cêntimos do preço
+	MOV R8, R3										; R8 tem os cêntimos do preço
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os cêntimos do preço no display							
 
+	; Restaurar os registos
 	POP R9
 	POP R8
 	POP R3
@@ -730,6 +907,7 @@ CicloEscrevePreco:
 
 AtualizarPrecoEmFalta:
 
+	; Guardar os registos
 	PUSH R0
 	PUSH R1
 	PUSH R2
@@ -769,6 +947,7 @@ FoiPago:
 	
 FimAtualizarPrecoEmFalta:
 
+	; Restaurar os registos
 	POP R7
 	POP R6
 	POP R2
@@ -779,13 +958,14 @@ FimAtualizarPrecoEmFalta:
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                       Rotina Adiciona Stock
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; Atualiza o stock de moedas/notas adicionando 1 à quantidade de dinheiro do valor monetário atual
+; Atualiza o stock de moedas/notas adicionando 1 à quantidade de dinheiro do valor monetário inserido pelo utilizador
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ; R5 -> Valor a adicionar ao stock / inserido pelo utilizador
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
 AdicionaStock:
 
+	; Guardar os registos
 	PUSH R0
 	PUSH R1
 	PUSH R2
@@ -854,6 +1034,7 @@ AtualizarStock:
 
 FimAtualizaStock:
 
+	; Restaurar os registos
 	POP R4
 	POP R3
 	POP R2
@@ -1088,15 +1269,15 @@ FimCicloCriarPEPE:
 	RET
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-;									                      Rotina Carregar PEPE
+;									                      Rotina Atualizar Saldo PEPE
 ;-----------------------------------------------------------------------------------------------------------------------------------------
-; Carrega um PEPE com um valor monetário
+; Atualiza o saldo do PEPE com o valor do bilhete
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ; R10 -> Valor a ser carregado no PEPE
 ; R11 -> Número do PEPE a ser carregado
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 
-CarregarPEPE:
+AtualizarSaldoPEPE:
 
 	PUSH R0
 	PUSH R1
@@ -1111,12 +1292,12 @@ CarregarPEPE:
 
 	SUB R0, R1										; Subtrai 16 ao endereço da base de dados dos PEPEs para fins de ciclo de modo que ao adicionar começar no primeiro lugar da base de dados dos PEPEs
 
-CicloCarregarPEPE:
+CicloAtualizarSaldoPEPE:
 
 	ADD R0, R1										; Adiciona 16 ao endereço da base de dados dos PEPEs para passar para o próximo lugar da base de dados
 	MOV R2, [R0]									; R2 tem o número do PEPE atual
 	CMP R2, R4										; Compara o número do PEPE atual com o número do PEPE a ser carregado
-	JNE CicloCarregarPEPE							; Se o número do PEPE atual for diferente do número do PEPE a ser carregado, repete o ciclo
+	JNE CicloAtualizarSaldoPEPE						; Se o número do PEPE atual for diferente do número do PEPE a ser carregado, repete o ciclo
 
 	ADD R0, 4										; Adiciona 4 ao endereço da base de dados dos PEPEs para passar para o lugar do valor monetario do PEPE
 	MOV [R0], R3									; Atualiza o valor monetario do PEPE
@@ -1345,8 +1526,10 @@ VerificaPEPE:
 	MOV R0, BaseDeDadosPEPE							; R0 tem o endereço da base de dados dos PEPEs
 	MOV R1, 16										; R1 tem o valor 16 para passar de endereço em endereço
 	MOV R3, NPEPEVerificar							; R3 tem o endereço do PEPE introduzido pelo utilizador
+	MOVB R4, [R3]									; R4 tem o número do PEPE introduzido pelo utilizador
 
-	SUB R0, R1										; Subtrai 16 ao endereço da base de dados dos PEPEs para fins de ciclo de modo que ao adicionar começar no primeiro lugar da base de dados dos PEPEs
+	CMP R4, 0										; Compara o número do PEPE introduzido pelo utilizador com 0
+	JEQ NaoEncontrado								; Se o número do PEPE introduzido pelo utilizador for 0, salta para a etiqueta NaoEncontrado
 
 	MOV R5, 0										; R5 tem o valor 0 para fins de contagem de linhas para verificar se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs
 
@@ -1358,9 +1541,8 @@ CicloVerificaPEPE:
 	JEQ NaoEncontrado								; Se o número de linhas para verificar se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs for igual a 10, salta para a etiqueta NaoEncontrado
 	ADD R5, 1										; Adiciona 1 ao número de linhas verificadas
 
-	ADD R0, R1										; Adiciona 16 ao endereço da base de dados dos PEPEs para passar para o próximo lugar da base de dados
 	MOV R2, [R0]									; R2 tem o número do PEPE atual
-	MOV R4, [R3]									; R4 tem o número do PEPE introduzido pelo utilizador
+	ADD R0, R1										; Adiciona 16 ao endereço da base de dados dos PEPEs para passar para o próximo lugar da base de dados
 	CMP R2, R4										; Compara o número do PEPE atual com o número do PEPE introduzido pelo utilizador
 	JNE CicloVerificaPEPE							; Se o número do PEPE atual for diferente do número do PEPE introduzido pelo utilizador, repete o ciclo
 
@@ -1368,18 +1550,199 @@ CicloVerificaPEPE:
 
 NaoEncontrado:
 
-	MOV R6, 0										; R6 tem o valor 0, que quer dizer que o PEPE introduzido pelo utilizador não existe
+	MOV R7, 0										; R6 tem o valor 0, que quer dizer que o PEPE introduzido pelo utilizador não existe
 	JMP FimCicloVerificaPEPE						; Salta para a etiqueta FimCicloVerificaPEPE
 
 Encontrado:
 
-	MOV R6, 1										; R6 tem o valor 1, que quer dizer que o PEPE introduzido pelo utilizador existe
+	MOV R7, 1										; R6 tem o valor 1, que quer dizer que o PEPE introduzido pelo utilizador existe
+
+	MOV R3, NPEPEAtual								; R1 tem o endereço do PEPE atual
+	MOV [R3], R2									; Atualiza o PEPE atual
+
+	SUB R0, R1										; Subtrai o endereço do PEPE para ir para o do atual
+	ADD R0, 4										; Adiciona 4 ao endereço da base de dados dos PEPEs para passar para o lugar do valor monetario do PEPE
+	MOV R2, [R0]									; R2 tem o valor monetario do PEPE
+	MOV R1, SaldoPEPEAtual							; R1 tem o endereço do saldo do PEPE atual
+	MOV [R1], R2									; Atualiza o saldo do PEPE atual
+
 	JMP FimCicloVerificaPEPE						; Salta para a etiqueta FimCicloVerificaPEPE
 
 FimCicloVerificaPEPE:
 
 	POP R6
 	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                       Rotina Escrever Cartao
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Escreve o número e o saldo do PEPE no display
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+EscreverCartao:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	PUSH R8
+	PUSH R9
+
+	MOV R0, EndNumeroPEPE							; R0 tem o endereço a escrever o numero do PEPE no cartão
+	MOV R1, EndSaldoPEPECentimos					; R1 tem o endereço a escrever os centimos do saldo do PEPE no cartão
+	MOV R6, EndSaldoPEPEEuros						; R6 tem o endereço a escrever os euros do saldo do PEPE no cartão
+
+	MOV R2, 100 									; R2 tem o valor 100 para obter os euros e cêntimos do saldo
+
+CicloEscreverCartao:
+
+	MOV R3, NPEPEAtual 								; R3 tem o número do PEPE atual
+	MOV R8, [R3]									; R8 tem o número do PEPE atual
+	MOV R9, R0 										; R9 tem o endereço a escrever o numero do PEPE no cartão
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve o número do PEPE atual no cartão
+
+	MOV R3, SaldoPEPEAtual							; R3 tem o saldo do PEPE atual
+	MOV R4, [R3]									; R4 tem o saldo do PEPE atual
+	DIV R4, R2										; R4 tem os euros do saldo do PEPE atual
+	MOV R5, [R3]									; R5 tem o saldo do PEPE atual
+	MOD R5, R2										; R5 tem os cêntimos do saldo do PEPE atual
+
+	MOV R9, R6										; R9 tem o endereço a escrever os euros do saldo do PEPE atual no cartão
+	MOV R8, R4										; R8 tem os euros do saldo do PEPE atual
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os euros do saldo do PEPE atual no cartão
+	MOV R9, R1										; R9 tem o endereço a escrever os cêntimos do saldo do PEPE atual no cartão
+	MOV R8, R5										; R8 tem os cêntimos do saldo do PEPE atual
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os cêntimos do saldo do PEPE atual no cartão
+
+	POP R9
+	POP R8
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                   Rotina Escrever Talao PEPE
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; Escreve o preço da compra e o saldo do PEPE atual no talão
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+EscreverTalaoPEPE:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	PUSH R8
+	PUSH R9
+
+	MOV R0, 16										; R0 tem o valor 16 para passar de endereço em endereço
+	MOV R1, 100										; R1 tem o valor 100 para obter os euros e os cêntimos
+
+	MOV R2, EndPrecosEurosTalao						; R2 tem o endereço a escrever os euros dos preços no talão
+	MOV R3, EndPrecosCentimosTalao					; R3 tem o endereço a escrever os cêntimos dos preços no talão
+
+	; Escreve o preço da compra no talão
+	MOV R4, PrecoTotalCompra						; R4 tem o endereço do preço total da compra
+	MOV R5, [R4]									; R5 tem o preço total da compra
+	DIV R5, R1										; R5 tem os euros do preço total da compra
+	MOV R6, [R4]									; R6 tem o preço total da compra
+	MOD R6, R1										; R6 tem os cêntimos do preço total da compra
+
+	MOV R9, R2										; R9 tem o endereço a escrever os euros do preço total da compra no talão
+	MOV R8, R5										; R8 tem os euros do preço total da compra
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os euros do preço total da compra no talão
+	MOV R9, R3										; R9 tem o endereço a escrever os cêntimos do preço total da compra no talão
+	MOV R8, R6										; R8 tem os cêntimos do preço total da compra
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os cêntimos do preço total da compra no talão
+
+	ADD R2, R0										; Adiciona 16 ao endereço a escrever os euros dos preços no talão para passar para o próximo preço
+	ADD R3, R0										; Adiciona 16 ao endereço a escrever os cêntimos dos preços no talão para passar para o próximo preço
+
+	; Escreve o valor do saldo do PEPE atual no talão
+	MOV R4, SaldoPEPEAtual							; R4 tem o endereço do saldo do PEPE atual
+	MOV R5, [R4]									; R5 tem o saldo do PEPE atual
+	DIV R5, R1										; R5 tem os euros do saldo do PEPE atual
+	MOV R6, [R4]									; R6 tem o saldo do PEPE atual
+	MOD R6, R1										; R6 tem os cêntimos do saldo do PEPE atual
+
+	MOV R9, R2										; R9 tem o endereço a escrever os euros do saldo do PEPE atual no talão
+	MOV R8, R5										; R8 tem os euros do saldo do PEPE atual
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os euros do saldo do PEPE atual no talão
+	MOV R9, R3										; R9 tem o endereço a escrever os cêntimos do saldo do PEPE atual no talão
+	MOV R8, R6										; R8 tem os cêntimos do saldo do PEPE atual
+	CALL EscreveDisplay								; Chama a rotina EscreveDisplay, que escreve os cêntimos do saldo do PEPE atual no talão
+
+	POP R9
+	POP R8
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;-----------------------------------------------------------------------------------------------------------------------------------------
+;									                  Rotina Escrever Inserido PEPE
+;-----------------------------------------------------------------------------------------------------------------------------------------
+; R5 -> Valor inserido pelo o utilizador
+;-----------------------------------------------------------------------------------------------------------------------------------------
+
+EscreverInseridoPEPE:
+
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R6
+	PUSH R8
+	PUSH R9
+
+	MOV R0, ValorInseridoCompra					; R0 tem o endereço do valor inserido no recarregamento do PEPE
+	MOV R6, [R0]								; R6 tem o valor inserido no recarregamento do PEPE
+	ADD R6, R5									; Adiciona o valor inserido pelo utilizador ao valor inserido no recarregamento do PEPE
+	MOV [R0], R6								; Atualiza o valor inserido no recarregamento do PEPE
+
+	MOV R0, 100									; R0 tem o valor 100 para obter os euros e os cêntimos do saldo
+	MOV R3, EndSaldoPEPECentimosRecarregar 		; R3 tem o endereço a escrever os cêntimos do dinheiro inserido no PEPE
+	MOV R4, EndSaldoPEPEEurosRecarregar 		; R4 tem o endereço a escrever os euros do dinheiro inserido no PEPE
+
+CicloEscreverInseridoPEPE:
+
+	MOV R1, R6									; R1 tem o dinheiro inserido no PEPE
+	DIV R1, R0									; R1 tem os euros do dinheiro inserido no PEPE
+	MOV R2, R6									; R2 tem o dinheiro inserido no PEPE
+	MOD R2, R0									; R2 tem os cêntimos do dinheiro inserido no PEPE
+
+	MOV R9, R4									; R9 tem o endereço a escrever os euros do dinheiro inserido no PEPE
+	MOV R8, R1									; R8 tem os euros do dinheiro inserido no PEPE
+	CALL EscreveDisplay							; Chama a rotina EscreveDisplay, que escreve os euros do dinheiro inserido no PEPE
+	MOV R9, R3									; R9 tem o endereço a escrever os cêntimos do dinheiro inserido no PEPE
+	MOV R8, R2									; R8 tem os cêntimos do dinheiro inserido no PEPE
+	CALL EscreveDisplay							; Chama a rotina EscreveDisplay, que escreve os cêntimos do dinheiro inserido no PEPE
+
+	POP R9
+	POP R8
+	POP R6
 	POP R4
 	POP R3
 	POP R2
@@ -1486,6 +1849,10 @@ FimCicloEscreveStock:
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;-----------------------------------------------------------------------------------------------------------------------------------------
+ReiniciaVariaveisCompra:
+
+	CALL ReiniciarVarCompra							; Chama a rotina ReiniciarVarCompra, que reinicia as variáveis da compra
+	JMP RotinaComprar								; Salta para a etiqueta RotinaComprar
 
 RotinaComprar:
 
@@ -1495,33 +1862,33 @@ RotinaComprar:
 
 LeOpcaoComprar:
 
-	MOV R0, PER_EN                                           
-    MOVB R1, [R0]                                         
-    CMP R1, 0
-	JEQ LeOpcaoComprar                                     
+	MOV R0, PER_EN									; R0 tem o endereço do periférico de entrada                                           
+    MOVB R1, [R0]									; R1 tem o valor do periférico de entrada                                         
+    CMP R1, 0										; Compara o valor do periférico de entrada com 0
+	JEQ LeOpcaoComprar								; Se o valor do periférico de entrada for 0, repete o ciclo                                     
 	
-	MOV R5, BEstacao1Preco
-	CMP R1, OpcaoEst1
-	JEQ EscolhaBilhetes
+	MOV R5, BEstacao1Preco							; R5 tem o preço da estação 1
+	CMP R1, OpcaoEst1								; Compara a opção escolhida pelo utilizador com a opção da estação 1
+	JEQ EscolhaBilhetes								; Se a opção escolhida pelo utilizador for a opção da estação 1, salta para a etiqueta EscolhaBilhetes
 
-	MOV R5, BEstacao2Preco
-	CMP R1, OpcaoEst2
-	JEQ EscolhaBilhetes
+	MOV R5, BEstacao2Preco							; R5 tem o preço da estação 2
+	CMP R1, OpcaoEst2								; Compara a opção escolhida pelo utilizador com a opção da estação 2
+	JEQ EscolhaBilhetes								; Se a opção escolhida pelo utilizador for a opção da estação 2, salta para a etiqueta EscolhaBilhetes
 
-	MOV R5, BEstacao3Preco
-    CMP R1, OpcaoEst3
-	JEQ EscolhaBilhetes
+	MOV R5, BEstacao3Preco							; R5 tem o preço da estação 3
+    CMP R1, OpcaoEst3								; Compara a opção escolhida pelo utilizador com a opção da estação 3
+	JEQ EscolhaBilhetes								; Se a opção escolhida pelo utilizador for a opção da estação 3, salta para a etiqueta EscolhaBilhetes
 
-	MOV R5, BEstacao4Preco
-	CMP R1, OpcaoEst4
-	JEQ EscolhaBilhetes
+	MOV R5, BEstacao4Preco							; R5 tem o preço da estação 4
+	CMP R1, OpcaoEst4								; Compara a opção escolhida pelo utilizador com a opção da estação 4
+	JEQ EscolhaBilhetes								; Se a opção escolhida pelo utilizador for a opção da estação 4, salta para a etiqueta EscolhaBilhetes
 
-	MOV R5, BEstacao5Preco
-    CMP R1, OpcaoEst5
-	JEQ EscolhaBilhetes
+	MOV R5, BEstacao5Preco							; R5 tem o preço da estação 5
+    CMP R1, OpcaoEst5								; Compara a opção escolhida pelo utilizador com a opção da estação 5
+	JEQ EscolhaBilhetes								; Se a opção escolhida pelo utilizador for a opção da estação 5, salta para a etiqueta EscolhaBilhetes
 
-    CMP R1, OpcaoCancelarCompra
-	JEQ VoltarInicioCompra
+    CMP R1, OpcaoCancelarCompra						; Compara a opção escolhida pelo utilizador com a opção de cancelar a compra
+	JEQ VoltarInicioCompra							; Se a opção escolhida pelo utilizador for a opção de cancelar a compra, salta para a etiqueta VoltarInicioCompra
 	
 	CALL RotinaErro
 	JMP RotinaComprar
@@ -1663,13 +2030,13 @@ LeOpcaoInserirDinheiro3:
 	CMP R1, 0
 	JEQ LeOpcaoInserirDinheiro3                                     
 	
-	;MOV R5, Valor10Euros
+	MOV R5, Valor10Euros
 	CMP R1, Opcao10EuroInserir3
-	JEQ VoltarInicioCompra2
+	JEQ InseriuDinheiro
 
-	;MOV R5, Valor20Euros
+	MOV R5, Valor20Euros
 	CMP R1, Opcao20EuroInserir3
-	JEQ VoltarInicioCompra2
+	JEQ InseriuDinheiro
 
 	CMP R1, OpcaoSeguinteInserir3
 	JEQ InserirDinheiro1
@@ -1727,7 +2094,7 @@ Pago:
 	CALL CriarPEPE									; Chama a rotina CriarPEPE, que cria um novo PEPE	
 
 	CMP R10, 1 										; Compara o valor de R10 com 1, que quer dizer que não tem espaço para criar um novo PEPE
-	;JEQ SemEspaco									; Se o valor de R10 for 1, salta para a etiqueta SemEspaco
+	JEQ SemEspaco									; Se o valor de R10 for 1, salta para a etiqueta SemEspaco
 
 	CALL EscreverTalao								; Chama a rotina EscreverTalao, que escreve os valores do número do PEPE criado, preco total, valor total inserido e troco no talão
 
@@ -1747,7 +2114,24 @@ LeOpcaoPago:
 VoltarInicioCompra2:
 	JMP Ligado
 
-;SemEspaco:
+SemEspaco:
+
+	MOV R2, Display_ErroEspacoInsuficiente			; R2 tem o endereço do display de erro de espaço insuficiente
+	CALL MostraDisplay								; Mostra o display de erro de espaço insuficiente
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+LeOpcaoSemEspaco:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoSemEspaco                                     
+	
+	CMP R1, OpcaoVoltarErro
+	JEQ VoltarInicioCompra2
+	
+	CALL RotinaErro
+	JMP SemEspaco
 
 PrimeiraCompra:
 
@@ -1756,8 +2140,8 @@ PrimeiraCompra:
 	CALL LimpaPerifericos							; Limpa os periféricos
 
 	MOV R5, PrecoTotalCompra						; R5 tem o endereço do preço total da compra
-	MOV R10, [R5]									; R11 tem o valor do preço total da compra
-	CALL CarregarPEPE								; Chama a rotina CarregarPEPE, que carrega o valor do preço total da compra no PEPE criado
+	MOV R10, [R5]									; R10 tem o valor do preço total da compra
+	CALL AtualizarSaldoPEPE							; Chama a rotina AtualizarSaldoPEPE, que atualiza o saldo do PEPE atual
 
 LeOpcaoPrimeiraCompra:
 
@@ -1790,7 +2174,27 @@ DevolverTroco:
 	CALL RetiraStock								; Chama a rotina RetiraStock, que retira da máquina os valores monetários correspondentes ao troco da compra
 
 	CMP R10, 1										; Compara o valor de R10 com 1, que quer dizer que não há como devolver o troco
-	;JEQ SemTroco									; Se o valor de R10 for 1, salta para a etiqueta SemTroco
+	JEQ SemTroco									; Se o valor de R10 for 1, salta para a etiqueta SemTroco
+	JMP DevolverTroco1 								; Se o valor de R10 for 0, salta para a etiqueta DevolverTroco1
+
+SemTroco:
+
+	MOV R2, Display_SemTroco						; R2 tem o endereço do display de sem troco
+	CALL MostraDisplay								; Mostra o display de sem troco
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+LeOpcaoSemTroco:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoSemTroco                                     
+	
+	CMP R1, OpcaoContinuarSemTroco
+	JEQ ObrigadoCompra
+	
+	CALL RotinaErro
+	JMP SemTroco
 
 DevolverTroco1:
 
@@ -1813,7 +2217,7 @@ LeOpcaoDevolverTroco1:
 	JEQ DevolverTroco2
 
 	CMP R1, OpcaoSairTrocoDevolvido
-	JEQ VoltarInicioCompra2
+	JEQ ObrigadoCompra
 	
 	CALL RotinaErro
 	JMP DevolverTroco1
@@ -1839,7 +2243,7 @@ LeOpcaoDevolverTroco2:
 	JEQ DevolverTroco3
 
 	CMP R1, OpcaoSairTrocoDevolvido
-	JEQ VoltarInicioCompra2
+	JEQ ObrigadoCompra
 	
 	CALL RotinaErro
 	JMP DevolverTroco2
@@ -1865,10 +2269,29 @@ LeOpcaoDevolverTroco3:
 	JEQ DevolverTroco1
 
 	CMP R1, OpcaoSairTrocoDevolvido
-	JEQ VoltarInicioCompra2
+	JEQ ObrigadoCompra
 	
 	CALL RotinaErro
 	JMP DevolverTroco3
+
+ObrigadoCompra:
+
+	MOV R2, Display_ObrigadoCompra					; R2 tem o endereço do display de agradecimento pela compra
+	CALL MostraDisplay								; Mostra o display de agradecimento pela compra
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+LeOpcaoObrigadoCompra:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoObrigadoCompra                                     
+	
+	CMP R1, OpcaoContinuarObrigadoCompra
+	JEQ VoltarInicioCompra2
+	
+	CALL RotinaErro
+	JMP ObrigadoCompra
 	
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                         Etiqueta Usar Cartão
@@ -1890,7 +2313,7 @@ LeOpcaoUsarCartao:
 	JEQ LeOpcaoUsarCartao                                   
 	
 	CMP R1, OpcaoContinuarCartao
-	JEQ VoltarInicioUsarCartao
+	JEQ VerificarNPEPE
 
 	CMP R1, OpcaoCancelarCartao
 	JEQ VoltarInicioUsarCartao
@@ -1900,6 +2323,347 @@ LeOpcaoUsarCartao:
 
 VoltarInicioUsarCartao:
 	JMP Ligado
+
+VerificarNPEPE:
+
+	MOV R7, 0										; R7 tem o valor 0 para fins de verificação do número do PEPE introduzido pelo utilizador
+	CALL VerificaPEPE								; Chama a rotina VerificaPEPE, que verifica se o PEPE introduzido pelo utilizador existe na base de dados dos PEPEs
+	CMP R7, 1										; Compara o valor de R7 com 1, que quer dizer que o PEPE introduzido pelo utilizador existe
+	JEQ ConsultarCartao								; Se o valor de R6 for 1, salta para a etiqueta ConsultarCartao
+
+NPEPEIntroduzidoErrado:
+
+	MOV R2, Display_NPEPEErrado						; R2 tem o endereço do display de número do PEPE errado
+	CALL MostraDisplay								; Mostra o display de número do PEPE errado
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+LeOpcaoNPEPEIntroduzidoErrado:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoNPEPEIntroduzidoErrado                                     
+	
+	CMP R1, OpcaoVoltarNPEPEErrado
+	JEQ RotinaUsarCartao
+	
+	CALL RotinaErro
+	JMP NPEPEIntroduzidoErrado
+
+ConsultarCartao:
+
+	MOV R2, Display_MenuUsarPEPE					; R2 tem o endereço do display do menu de usar PEPE
+	CALL MostraDisplay								; Mostra o display do menu de usar PEPE
+	CALL LimpaPerifericos							; Limpa os periféricos
+
+	CALL ReiniciarVarCompra							; Chama a rotina ReiniciarVarCompra, que reinicia as variáveis da compra
+
+	CALL EscreverCartao								; Chama a rotina EscreverCartao, que escreve o número do PEPE atual e o saldo desse
+
+LeOpcaoConsultarCartao:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoConsultarCartao                                     
+	
+	CMP R1, OpcaoComprarPEPE
+	JEQ ComprarPEPE
+
+	CMP R1, OpcaoRecarregarPEPE
+	JEQ InserirDinheiroPEPE1
+
+	CMP R1, OpcaoVoltarPEPE
+	JEQ VoltarInicioUsarCartao
+
+	CALL RotinaErro
+	JMP ConsultarCartao
+
+ComprarPEPE:
+
+	MOV R2, Display_MenuComprar
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+
+	CALL ReiniciarVarCompra
+
+LeOpcaoComprarPEPE:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoComprarPEPE                                     
+	
+	MOV R5, BEstacao1Preco
+	CMP R1, OpcaoEst1
+	JEQ EscolhaBilhetesPEPE
+
+	MOV R5, BEstacao2Preco
+	CMP R1, OpcaoEst2
+	JEQ EscolhaBilhetesPEPE
+
+	MOV R5, BEstacao3Preco
+	CMP R1, OpcaoEst3
+	JEQ EscolhaBilhetesPEPE
+
+	MOV R5, BEstacao4Preco
+	CMP R1, OpcaoEst4
+	JEQ EscolhaBilhetesPEPE
+
+	MOV R5, BEstacao5Preco
+	CMP R1, OpcaoEst5
+	JEQ EscolhaBilhetesPEPE
+
+	CMP R1, OpcaoCancelarCompra
+	JEQ ConsultarCartao
+	
+	CALL RotinaErro
+	JMP ComprarPEPE
+
+EscolhaBilhetesPEPE:
+
+	MOV R2, Display_EscolheuBilhete
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+	MOV R6, PrecoTotalCompra
+	MOV R7, [R6]
+	ADD R7, R5
+	MOV [R6], R7
+
+LeOpcaoEscolhaBilhetesPEPE:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoEscolhaBilhetesPEPE                                     
+	
+	CMP R1, OpcaoSimEscolherBilhete
+	JEQ EscolhaBilhetesPEPE
+
+	CMP R1, OpcaoNaoEscolherBilhete
+	JEQ MostraPrecoTotalPEPE
+	
+	CALL RotinaErro
+	JMP EscolhaBilhetesPEPE
+
+MostraPrecoTotalPEPE:
+
+	MOV R2, Display_PrecoTotal
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+	MOV R6, PrecoTotalCompra
+	CALL EscreverPreco
+
+LeOpcaoMostraPrecoTotalPEPE:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoMostraPrecoTotalPEPE                                     
+	
+	CMP R1, OpcaoContinuarPrecoTotal
+	JEQ VerificarSaldoPEPE
+
+	CMP R1, OpcaoCancelarPrecoTotal
+	JEQ ConsultarCartao
+	
+	CALL RotinaErro
+	JMP MostraPrecoTotalPEPE
+
+VerificarSaldoPEPE:
+
+	MOV R6, PrecoTotalCompra
+	MOV R7, [R6]
+	MOV R5, SaldoPEPEAtual
+	MOV R6, [R5]
+	CMP R6, R7
+	JLT SaldoInsuficientePEPE
+	JMP PagoPEPE
+
+SaldoInsuficientePEPE:
+
+	MOV R2, Display_SaldoInsuficientePEPE
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+
+LeOpcaoSaldoInsuficientePEPE:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoSaldoInsuficientePEPE                                     
+	
+	CMP R1, OpcaoVoltarSaldoInsuficientePEPE
+	JEQ ConsultarCartao
+	
+	CALL RotinaErro
+	JMP SaldoInsuficientePEPE
+
+PagoPEPE:
+
+	MOV R2, Display_TalaoPEPE
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+
+	MOV R5, PrecoTotalCompra
+	MOV R6, [R5]
+	MOV R5, SaldoPEPEAtual
+	MOV R7, [R5]
+	SUB R7, R6
+	MOV [R5], R7
+
+	MOV R10, SaldoPEPEAtual
+	MOV R5, NPEPEAtual
+	MOV R11, [R5]
+	CALL AtualizarSaldoPEPE
+	CALL EscreverTalaoPEPE
+
+LeOpcaoPagoPEPE:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoPagoPEPE                                     
+	
+	CMP R1, OpcaoContinuarTalaoPEPE
+	JEQ VoltarConsultarCartao
+	
+	CALL RotinaErro
+	JMP PagoPEPE
+
+VoltarConsultarCartao:
+	JMP ConsultarCartao
+
+InserirDinheiroPEPE1:
+
+	MOV R2, Display_InserirDinheiro1
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+
+LeOpcaoRecarregarPEPE1:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoRecarregarPEPE1                                     
+	
+	MOV R5, Valor10Centimos
+	CMP R1, Opcao10CentimosInserir1
+	JEQ InseriuDinheiroPEPE
+
+	MOV R5, Valor20Centimos
+	CMP R1, Opcao20CentimosInserir1
+	JEQ InseriuDinheiroPEPE
+
+	MOV R5, Valor50Centimos
+	CMP R1, Opcao50CentimosInserir1
+	JEQ InseriuDinheiroPEPE
+
+	CMP R1, OpcaoSeguinteInserir1
+	JEQ InserirDinheiroPEPE2
+
+	CMP R1, OpcaoCancelarInserir1
+	JEQ VoltarConsultarCartao
+	
+	CALL RotinaErro
+	JMP InserirDinheiroPEPE1
+
+InserirDinheiroPEPE2:
+
+	MOV R2, Display_InserirDinheiro2
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+
+LeOpcaoRecarregarPEPE2:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoRecarregarPEPE2                                     
+	
+	MOV R5, Valor1Euro
+	CMP R1, Opcao1EuroInserir2
+	JEQ InseriuDinheiroPEPE
+
+	MOV R5, Valor2Euros
+	CMP R1, Opcao2EuroInserir2
+	JEQ InseriuDinheiroPEPE
+
+	MOV R5, Valor5Euros
+	CMP R1, Opcao5EurosInserir2
+	JEQ InseriuDinheiroPEPE
+
+	CMP R1, OpcaoSeguinteInserir2
+	JEQ InserirDinheiroPEPE3
+
+	CMP R1, OpcaoCancelarInserir2
+	JEQ VoltarConsultarCartao
+	
+	CALL RotinaErro
+	JMP InserirDinheiroPEPE2
+
+InserirDinheiroPEPE3:
+
+	MOV R2, Display_InserirDinheiro3
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+
+LeOpcaoRecarregarPEPE3:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoRecarregarPEPE3                                     
+	
+	MOV R5, Valor10Euros
+	CMP R1, Opcao10EuroInserir3
+	JEQ InseriuDinheiroPEPE
+
+	MOV R5, Valor20Euros
+	CMP R1, Opcao20EuroInserir3
+	JEQ InseriuDinheiroPEPE
+
+	CMP R1, OpcaoSeguinteInserir3
+	JEQ InserirDinheiroPEPE1
+
+	CMP R1, OpcaoCancelarInserir3
+	JEQ VoltarConsultarCartao
+	
+	CALL RotinaErro
+	JMP InserirDinheiroPEPE3
+
+InseriuDinheiroPEPE:
+
+	MOV R2, Display_InseriuDinheiroPEPE
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+
+	CALL AdicionaStock
+
+	MOV R6, SaldoPEPEAtual
+	MOV R7, [R6]
+	ADD R7, R5
+	MOV [R6], R7
+
+	MOV R10, SaldoPEPEAtual
+	MOV R6, NPEPEAtual
+	MOV R11, [R6]
+	CALL AtualizarSaldoPEPE
+
+	CALL EscreverInseridoPEPE
+
+LeOpcaoInseriuDinheiroPEPE:
+
+	MOV R0, PER_EN                                           
+	MOVB R1, [R0]                                         
+	CMP R1, 0
+	JEQ LeOpcaoInseriuDinheiroPEPE                                     
+	
+	CMP R1, OpcaoContinuarInseriuDinheiroPEPE
+	JEQ VoltarConsultarCartao
+	
+	CALL RotinaErro
+	JMP InseriuDinheiroPEPE
 
 ;-----------------------------------------------------------------------------------------------------------------------------------------
 ;									                            Etiqueta Stock
@@ -1998,8 +2762,8 @@ LeOpcaoConsultarStock2:
 	CMP R1, 0										; Compara o valor do botão opção com 0
 	JEQ LeOpcaoConsultarStock2						; Se o valor do botão for 0, refaz a leitura                                  
 	
-	CMP R1, OpcaoAnteriorStock						; Compara o valor do botão opção com a opção de anterior
-	JEQ ConsultarStock								; Se o valor do botão for igual à opção de anterior, salta para a página anterior de stock
+	CMP R1, OpcaoSeguinteStock						; Compara o valor do botão opção com a opção de seguinte
+	JEQ ConsultarStock3								; Se o valor do botão for igual à opção de seguinte, salta para a próxima página de stock
 
 	CMP R1, OpcaoSairStock							; Compara o valor do botão opção com a opção de sair
 	JEQ VoltarInicioStock							; Se o valor do botão for igual à opção de sair, salta para o menu principal
@@ -2007,15 +2771,30 @@ LeOpcaoConsultarStock2:
 	CALL RotinaErro
 	JMP ConsultarStock2
 
+ConsultarStock3:
+
+	MOV R2, Display_ConsultarStock3					; R2 tem o endereço do display do menu de consultar stock
+	CALL MostraDisplay								; Mostra o terceiro display de consultar stock
+	CALL LimpaPerifericos							; Limpa os periféricos
+	MOV R6, 2										; R6 tem o valor 2 que é o número de valores a escrever no display
+	MOV R7, StockNotas10							; R7 tem o endereço do primeiro valor a escrever no display
+	CALL EscreverStock								; Chama a rotina EscreverStock, que escreve as quantidades dos valores monetários no stock da maquina no display
+
+LeOpcaoConsultarStock3:
+
+	MOV R0, PER_EN         							; R0 tem o endereço do botão opção                                  
+	MOVB R1, [R0]									; Leitura do periferico Opção                                         
+	CMP R1, 0										; Compara o valor do botão opção com 0
+	JEQ LeOpcaoConsultarStock3						; Se o valor do botão for 0, refaz a leitura                                 
+	
+	CMP R1, OpcaoSeguinteStock						; Compara o valor do botão opção com a opção de seguinte
+	JEQ ConsultarStock								; Se o valor do botão for igual à opção de anterior, salta para a página anterior de stock
+
+	CMP R1, OpcaoSairStock							; Compara o valor do botão opção com a opção de sair
+	JEQ VoltarInicioStock							; Se o valor do botão for igual à opção de sair, salta para o menu principal
+
+	CALL RotinaErro
+	JMP ConsultarStock3
+
 VoltarInicioStock:
 	JMP Ligado
-
-;-----------------------------------------------------------------------------------------------------------------------------------------
-;									                            Rotina Erro
-;-----------------------------------------------------------------------------------------------------------------------------------------
-;
-;-----------------------------------------------------------------------------------------------------------------------------------------
-
-RotinaErro:
-
-    JMP Ligado
